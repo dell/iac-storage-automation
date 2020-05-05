@@ -1,0 +1,314 @@
+2020-01-16 03:44:30,967 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:44:30,967 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:44:30,967 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:44:31,516 dellemc_powermax_storagegroup.py INFO : Got error The requested resource was not found: Error get storagegroup. The status code received is 404 and the message is {'message': 'Storage Group [Ansible_Host_SG] on Symmetrix [000197600156] cannot be found'}. while getting details of storage group Ansible_Host_SG
+2020-01-16 03:44:31,517 dellemc_powermax_storagegroup.py INFO : Creating storage group Ansible_Host_SG
+2020-01-16 03:44:31,517 dellemc_powermax_storagegroup.py INFO : Creating empty storage group Ansible_Host_SG 
+2020-01-16 03:44:33,692 dellemc_powermax_storagegroup.py INFO : Get volumes for storage group Ansible_Host_SG
+2020-01-16 03:44:33,692 dellemc_powermax_storagegroup.py INFO : Getting the list of volumes from storage group Ansible_Host_SG
+2020-01-16 03:44:33,701 dellemc_powermax_storagegroup.py INFO : 0 volumes present in storage group Ansible_Host_SG
+2020-01-16 03:44:34,077 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:44:34,077 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:44:34,077 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:44:34,106 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 03:44:34,106 dellemc_powermax_storagegroup.py INFO : Create new volume(s) for storage group Ansible_Host_SG
+2020-01-16 03:44:34,106 dellemc_powermax_storagegroup.py INFO : Creating new volumes for SG Ansible_Host_SG
+2020-01-16 03:44:34,139 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev1', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:44:34,146 dellemc_powermax_storagegroup.py INFO : No volume found with volume identifier Ansible_Host_Dev1 in storage group Ansible_Host_SG
+2020-01-16 03:44:34,147 dellemc_powermax_storagegroup.py INFO : Creating volume with name Ansible_Host_Dev1, size 1 GB
+2020-01-16 03:44:49,406 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev2', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:44:49,416 dellemc_powermax_storagegroup.py INFO : No volume found with volume identifier Ansible_Host_Dev2 in storage group Ansible_Host_SG
+2020-01-16 03:44:49,416 dellemc_powermax_storagegroup.py INFO : Creating volume with name Ansible_Host_Dev2, size 1 GB
+2020-01-16 03:45:04,692 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev3', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:45:04,700 dellemc_powermax_storagegroup.py INFO : No volume found with volume identifier Ansible_Host_Dev3 in storage group Ansible_Host_SG
+2020-01-16 03:45:04,700 dellemc_powermax_storagegroup.py INFO : Creating volume with name Ansible_Host_Dev3, size 1 GB
+2020-01-16 03:45:20,000 dellemc_powermax_storagegroup.py INFO : Add existing volume(s) to storage group Ansible_Host_SG
+2020-01-16 03:45:20,136 dellemc_powermax_storagegroup.py INFO : The given volumes [] are already present in storage group Ansible_Host_SG
+2020-01-16 03:45:20,136 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Bronze', 'base_slo_name': 'Bronze', 'service_level': 'Bronze', 'srp': 'SRP_1', 'slo_compliance': 'STABLE', 'num_of_vols': 0, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 0, 'num_of_snapshots': 0, 'cap_gb': 0.0, 'device_emulation': 'N/A', 'type': 'Standalone', 'unprotected': True, 'compression': True, 'VPSaved': 'N/A'}
+2020-01-16 03:45:20,136 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:45:20,677 dellemc_powermax_host.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:45:20,678 dellemc_powermax_host.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:45:20,678 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 03:45:20,720 dellemc_powermax_host.py ERROR : Got error The requested resource was not found: Error get host. The status code received is 404 and the message is {'message': 'Initiator Group [Ansible_Host_IG] on Symmetrix [000197600156] cannot be found'}. while getting details of host The requested resource was not found: Error get host. The status code received is 404 and the message is {'message': 'Initiator Group [Ansible_Host_IG] on Symmetrix [000197600156] cannot be found'}.
+2020-01-16 03:45:20,720 dellemc_powermax_host.py INFO : Creating host Ansible_Host_IG
+2020-01-16 03:45:20,720 dellemc_powermax_host.py INFO : Creating host Ansible_Host_IG with parameters:initiators=['10000000cabffaee', '10000000cccffaef'],host_flags=None
+2020-01-16 03:45:21,964 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 03:45:21,975 dellemc_powermax_host.py INFO : changed True
+2020-01-16 03:45:22,464 dellemc_powermax_portgroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:45:22,464 dellemc_powermax_portgroup.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 03:45:22,464 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 03:45:22,506 dellemc_powermax_portgroup.py ERROR : Got error The requested resource was not found: Error get portgroup. The status code received is 404 and the message is {'message': 'Port Group [Ansible_Host_PG] on Symmetrix [000197600156] cannot be found'}. while getting details of port group The requested resource was not found: Error get portgroup. The status code received is 404 and the message is {'message': 'Port Group [Ansible_Host_PG] on Symmetrix [000197600156] cannot be found'}.
+2020-01-16 03:45:22,506 dellemc_powermax_portgroup.py INFO : Creating port group Ansible_Host_PG
+2020-01-16 03:45:22,506 dellemc_powermax_portgroup.py INFO : Creating port group Ansible_Host_PG with ports [{'directorId': 'FA-1D', 'portId': 8}, {'directorId': 'FA-2D', 'portId': 8}]
+2020-01-16 03:45:23,623 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 03:45:24,121 dellemc_powermax_maskingview.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:45:24,121 dellemc_powermax_maskingview.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 03:45:24,163 dellemc_powermax_maskingview.py INFO : Masking view Ansible_Host_MV is not present in system
+2020-01-16 03:45:24,163 dellemc_powermax_maskingview.py INFO : Creating masking view Ansible_Host_MV
+2020-01-16 03:45:24,163 dellemc_powermax_maskingview.py INFO : Creating masking view Ansible_Host_MV... 
+2020-01-16 03:54:59,567 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:54:59,567 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:54:59,567 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:55:00,099 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 03:55:00,099 dellemc_powermax_storagegroup.py INFO : Get volumes for storage group Ansible_Host_SG
+2020-01-16 03:55:00,099 dellemc_powermax_storagegroup.py INFO : Getting the list of volumes from storage group Ansible_Host_SG
+2020-01-16 03:55:00,118 dellemc_powermax_storagegroup.py INFO : 3 volumes present in storage group Ansible_Host_SG
+2020-01-16 03:55:00,118 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Bronze', 'base_slo_name': 'Bronze', 'service_level': 'Bronze', 'srp': 'SRP_1', 'slo_compliance': 'NONE', 'num_of_vols': 3, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 3.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 03:55:00,118 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:55:00,498 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:00,498 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:55:00,498 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:55:00,528 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 03:55:00,528 dellemc_powermax_storagegroup.py INFO : Create new volume(s) for storage group Ansible_Host_SG
+2020-01-16 03:55:00,528 dellemc_powermax_storagegroup.py INFO : Creating new volumes for SG Ansible_Host_SG
+2020-01-16 03:55:00,535 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev1', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:55:00,661 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev2', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:55:00,684 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev3', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:55:00,717 dellemc_powermax_storagegroup.py INFO : Add existing volume(s) to storage group Ansible_Host_SG
+2020-01-16 03:55:00,823 dellemc_powermax_storagegroup.py INFO : The given volumes [] are already present in storage group Ansible_Host_SG
+2020-01-16 03:55:00,823 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Bronze', 'base_slo_name': 'Bronze', 'service_level': 'Bronze', 'srp': 'SRP_1', 'slo_compliance': 'NONE', 'num_of_vols': 3, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 3.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 03:55:00,823 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:55:01,344 dellemc_powermax_host.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:01,344 dellemc_powermax_host.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:55:01,344 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 03:55:01,382 dellemc_powermax_host.py INFO : Adding initiators to host Ansible_Host_IG
+2020-01-16 03:55:01,382 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 03:55:01,401 dellemc_powermax_host.py INFO : Initiators are already present in host Ansible_Host_IG
+2020-01-16 03:55:01,401 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 03:55:01,409 dellemc_powermax_host.py INFO : changed False
+2020-01-16 03:55:01,901 dellemc_powermax_portgroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:01,901 dellemc_powermax_portgroup.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 03:55:01,901 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 03:55:01,931 dellemc_powermax_portgroup.py INFO : Adding ports to port group Ansible_Host_PG
+2020-01-16 03:55:01,959 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 03:55:02,458 dellemc_powermax_maskingview.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:02,459 dellemc_powermax_maskingview.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 03:55:02,491 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 03:55:02,508 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 03:55:46,667 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:46,695 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:55:46,695 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:55:46,717 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 03:55:46,717 dellemc_powermax_storagegroup.py INFO : Get volumes for storage group Ansible_Host_SG
+2020-01-16 03:55:46,717 dellemc_powermax_storagegroup.py INFO : Getting the list of volumes from storage group Ansible_Host_SG
+2020-01-16 03:55:46,717 decorators.py WARNING : ProvisioningFunctions.get_vols_from_storagegroup will be deprecated in version 93 in favour of function ProvisioningFunctions.get_volumes_from_storage_group. For further information please consult PyU4V 91 release notes.
+2020-01-16 03:55:46,725 dellemc_powermax_storagegroup.py INFO : 3 volumes present in storage group Ansible_Host_SG
+2020-01-16 03:55:46,726 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Bronze', 'service_level': 'Bronze', 'base_slo_name': 'Bronze', 'srp': 'SRP_1', 'slo_compliance': 'NONE', 'num_of_vols': 3, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 3.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'vp_saved_percent': 100.0}
+2020-01-16 03:55:46,726 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:55:47,113 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:47,140 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:55:47,140 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:55:47,173 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 03:55:47,173 dellemc_powermax_storagegroup.py INFO : Create new volume(s) for storage group Ansible_Host_SG
+2020-01-16 03:55:47,173 dellemc_powermax_storagegroup.py INFO : Creating new volumes for SG Ansible_Host_SG
+2020-01-16 03:55:47,180 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev1', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:55:47,201 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev2', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:55:47,222 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev3', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 03:55:47,242 decorators.py WARNING : ProvisioningFunctions.get_vols_from_storagegroup will be deprecated in version 93 in favour of function ProvisioningFunctions.get_volumes_from_storage_group. For further information please consult PyU4V 91 release notes.
+2020-01-16 03:55:47,273 dellemc_powermax_storagegroup.py INFO : Add existing volume(s) to storage group Ansible_Host_SG
+2020-01-16 03:55:47,281 decorators.py WARNING : ProvisioningFunctions.get_vols_from_storagegroup will be deprecated in version 93 in favour of function ProvisioningFunctions.get_volumes_from_storage_group. For further information please consult PyU4V 91 release notes.
+2020-01-16 03:55:47,348 dellemc_powermax_storagegroup.py INFO : The given volumes [] are already present in storage group Ansible_Host_SG
+2020-01-16 03:55:47,348 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Bronze', 'service_level': 'Bronze', 'base_slo_name': 'Bronze', 'srp': 'SRP_1', 'slo_compliance': 'NONE', 'num_of_vols': 3, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 3.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'vp_saved_percent': 100.0}
+2020-01-16 03:55:47,348 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 03:55:47,864 dellemc_powermax_host.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:47,893 dellemc_powermax_host.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 03:55:47,893 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 03:55:47,912 dellemc_powermax_host.py INFO : Adding initiators to host Ansible_Host_IG
+2020-01-16 03:55:47,912 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 03:55:47,919 dellemc_powermax_host.py INFO : Initiators are already present in host Ansible_Host_IG
+2020-01-16 03:55:47,919 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 03:55:47,925 dellemc_powermax_host.py INFO : changed False
+2020-01-16 03:55:48,421 dellemc_powermax_portgroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:48,450 dellemc_powermax_portgroup.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 03:55:48,450 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 03:55:48,451 decorators.py WARNING : ProvisioningFunctions.get_portgroup will be deprecated in version 93 in favour of function ProvisioningFunctions.get_port_group. For further information please consult PyU4V 91 release notes.
+2020-01-16 03:55:48,461 dellemc_powermax_portgroup.py INFO : Adding ports to port group Ansible_Host_PG
+2020-01-16 03:55:48,462 decorators.py WARNING : ProvisioningFunctions.get_ports_from_pg will be deprecated in version 93 in favour of function ProvisioningFunctions.get_ports_from_port_group. For further information please consult PyU4V 91 release notes.
+2020-01-16 03:55:48,488 decorators.py WARNING : ProvisioningFunctions.modify_portgroup will be deprecated in version 93 in favour of function ProvisioningFunctions.modify_port_group. For further information please consult PyU4V 91 release notes.
+2020-01-16 03:55:49,534 decorators.py WARNING : ProvisioningFunctions.modify_portgroup will be deprecated in version 93 in favour of function ProvisioningFunctions.modify_port_group. For further information please consult PyU4V 91 release notes.
+2020-01-16 03:55:50,572 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 03:55:50,572 decorators.py WARNING : ProvisioningFunctions.get_portgroup will be deprecated in version 93 in favour of function ProvisioningFunctions.get_port_group. For further information please consult PyU4V 91 release notes.
+2020-01-16 03:55:51,078 dellemc_powermax_maskingview.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 03:55:51,105 dellemc_powermax_maskingview.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 03:55:51,113 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 03:55:51,144 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 04:12:14,723 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:12:14,723 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:12:14,724 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:12:15,427 dellemc_powermax_storagegroup.py INFO : The storage group True needs to be modified and the modified param are {'modified_slo': 'Diamond'} 
+2020-01-16 04:12:15,427 dellemc_powermax_storagegroup.py INFO : Get volumes for storage group Ansible_Host_SG
+2020-01-16 04:12:15,427 dellemc_powermax_storagegroup.py INFO : Getting the list of volumes from storage group Ansible_Host_SG
+2020-01-16 04:12:15,436 dellemc_powermax_storagegroup.py INFO : 3 volumes present in storage group Ansible_Host_SG
+2020-01-16 04:12:15,436 dellemc_powermax_storagegroup.py INFO : Modifying Storage group Ansible_Host_SG
+2020-01-16 04:12:15,436 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:12:15,449 dellemc_powermax_storagegroup.py INFO : Modifying the SG SLO to Diamond 
+2020-01-16 04:12:15,450 dellemc_powermax_storagegroup.py INFO : The existing SG SLO is Bronze and the desired SG SLO is Diamond 
+2020-01-16 04:12:18,849 dellemc_powermax_storagegroup.py INFO : Getting the list of volumes from storage group Ansible_Host_SG
+2020-01-16 04:12:18,859 dellemc_powermax_storagegroup.py INFO : 3 volumes present in storage group Ansible_Host_SG
+2020-01-16 04:12:18,859 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Bronze', 'base_slo_name': 'Bronze', 'service_level': 'Bronze', 'srp': 'SRP_1', 'slo_compliance': 'STABLE', 'num_of_vols': 3, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 3.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 04:12:18,859 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:12:19,240 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:12:19,241 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:12:19,241 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:12:19,271 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 04:12:19,271 dellemc_powermax_storagegroup.py INFO : Create new volume(s) for storage group Ansible_Host_SG
+2020-01-16 04:12:19,271 dellemc_powermax_storagegroup.py INFO : Creating new volumes for SG Ansible_Host_SG
+2020-01-16 04:12:19,278 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev1', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:12:19,428 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev2', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:12:19,452 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev3', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:12:19,498 dellemc_powermax_storagegroup.py INFO : Add existing volume(s) to storage group Ansible_Host_SG
+2020-01-16 04:12:19,564 dellemc_powermax_storagegroup.py INFO : The given volumes [] are already present in storage group Ansible_Host_SG
+2020-01-16 04:12:19,564 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Diamond', 'base_slo_name': 'Diamond', 'service_level': 'Diamond', 'srp': 'SRP_1', 'slo_compliance': 'STABLE', 'num_of_vols': 3, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 3.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 04:12:19,564 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:12:20,096 dellemc_powermax_host.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:12:20,096 dellemc_powermax_host.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:12:20,096 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:12:20,138 dellemc_powermax_host.py INFO : Adding initiators to host Ansible_Host_IG
+2020-01-16 04:12:20,138 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:12:20,148 dellemc_powermax_host.py INFO : Initiators are already present in host Ansible_Host_IG
+2020-01-16 04:12:20,148 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:12:20,170 dellemc_powermax_host.py INFO : changed False
+2020-01-16 04:12:20,655 dellemc_powermax_portgroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:12:20,656 dellemc_powermax_portgroup.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 04:12:20,656 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 04:12:20,690 dellemc_powermax_portgroup.py INFO : Adding ports to port group Ansible_Host_PG
+2020-01-16 04:12:20,698 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 04:12:21,205 dellemc_powermax_maskingview.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:12:21,205 dellemc_powermax_maskingview.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 04:12:21,239 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 04:12:21,262 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 04:15:58,004 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:15:58,004 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:15:58,004 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:15:58,050 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 04:15:58,050 dellemc_powermax_storagegroup.py INFO : Get volumes for storage group Ansible_Host_SG
+2020-01-16 04:15:58,050 dellemc_powermax_storagegroup.py INFO : Getting the list of volumes from storage group Ansible_Host_SG
+2020-01-16 04:15:58,058 dellemc_powermax_storagegroup.py INFO : 3 volumes present in storage group Ansible_Host_SG
+2020-01-16 04:15:58,058 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Diamond', 'base_slo_name': 'Diamond', 'service_level': 'Diamond', 'srp': 'SRP_1', 'slo_compliance': 'STABLE', 'num_of_vols': 3, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 3.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 04:15:58,058 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:15:58,458 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:15:58,458 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:15:58,458 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:15:58,488 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 04:15:58,488 dellemc_powermax_storagegroup.py INFO : Create new volume(s) for storage group Ansible_Host_SG
+2020-01-16 04:15:58,488 dellemc_powermax_storagegroup.py INFO : Creating new volumes for SG Ansible_Host_SG
+2020-01-16 04:15:58,495 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev1', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:15:58,611 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev2', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:15:58,675 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev3', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:15:58,700 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev4', 'size': 2, 'cap_unit': 'GB'}
+2020-01-16 04:15:58,708 dellemc_powermax_storagegroup.py INFO : No volume found with volume identifier Ansible_Host_Dev4 in storage group Ansible_Host_SG
+2020-01-16 04:15:58,708 dellemc_powermax_storagegroup.py INFO : Creating volume with name Ansible_Host_Dev4, size 2 GB
+2020-01-16 04:16:08,993 dellemc_powermax_storagegroup.py INFO : Add existing volume(s) to storage group Ansible_Host_SG
+2020-01-16 04:16:09,144 dellemc_powermax_storagegroup.py INFO : The given volumes [] are already present in storage group Ansible_Host_SG
+2020-01-16 04:16:09,144 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Diamond', 'base_slo_name': 'Diamond', 'service_level': 'Diamond', 'srp': 'SRP_1', 'slo_compliance': 'STABLE', 'num_of_vols': 3, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 3.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 04:16:09,144 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:16:09,667 dellemc_powermax_host.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:16:09,667 dellemc_powermax_host.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:16:09,667 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:16:09,709 dellemc_powermax_host.py INFO : Adding initiators to host Ansible_Host_IG
+2020-01-16 04:16:09,709 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:16:09,717 dellemc_powermax_host.py INFO : Initiators are already present in host Ansible_Host_IG
+2020-01-16 04:16:09,717 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:16:09,726 dellemc_powermax_host.py INFO : changed False
+2020-01-16 04:16:10,214 dellemc_powermax_portgroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:16:10,214 dellemc_powermax_portgroup.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 04:16:10,215 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_DEMO_PG details
+2020-01-16 04:16:10,260 dellemc_powermax_portgroup.py ERROR : Got error The requested resource was not found: Error get portgroup. The status code received is 404 and the message is {'message': 'Port Group [Ansible_DEMO_PG] on Symmetrix [000197600156] cannot be found'}. while getting details of port group The requested resource was not found: Error get portgroup. The status code received is 404 and the message is {'message': 'Port Group [Ansible_DEMO_PG] on Symmetrix [000197600156] cannot be found'}.
+2020-01-16 04:16:10,260 dellemc_powermax_portgroup.py INFO : Creating port group Ansible_DEMO_PG
+2020-01-16 04:16:10,260 dellemc_powermax_portgroup.py INFO : Creating port group Ansible_DEMO_PG with ports [{'directorId': 'FA-1D', 'portId': 8}, {'directorId': 'FA-2D', 'portId': 8}]
+2020-01-16 04:16:11,398 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_DEMO_PG details
+2020-01-16 04:16:11,895 dellemc_powermax_maskingview.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:16:11,895 dellemc_powermax_maskingview.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 04:16:11,927 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 04:16:11,935 dellemc_powermax_maskingview.py ERROR : One or more of parameters (PG, SG, Host/Host Group) provided for the MV Ansible_Host_MV differ from the state of the MV on the array.
+2020-01-16 04:17:12,150 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:17:12,150 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:17:12,150 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:17:12,881 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 04:17:12,881 dellemc_powermax_storagegroup.py INFO : Get volumes for storage group Ansible_Host_SG
+2020-01-16 04:17:12,881 dellemc_powermax_storagegroup.py INFO : Getting the list of volumes from storage group Ansible_Host_SG
+2020-01-16 04:17:12,890 dellemc_powermax_storagegroup.py INFO : 4 volumes present in storage group Ansible_Host_SG
+2020-01-16 04:17:12,890 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Diamond', 'base_slo_name': 'Diamond', 'service_level': 'Diamond', 'srp': 'SRP_1', 'slo_compliance': 'STABLE', 'num_of_vols': 4, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 5.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 04:17:12,890 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:17:13,270 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:17:13,270 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:17:13,270 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:17:13,298 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 04:17:13,298 dellemc_powermax_storagegroup.py INFO : Create new volume(s) for storage group Ansible_Host_SG
+2020-01-16 04:17:13,298 dellemc_powermax_storagegroup.py INFO : Creating new volumes for SG Ansible_Host_SG
+2020-01-16 04:17:13,334 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev1', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:17:13,471 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev2', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:17:13,519 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev3', 'size': 1, 'cap_unit': 'GB'}
+2020-01-16 04:17:13,571 dellemc_powermax_storagegroup.py INFO : Processing vol {'vol_name': 'Ansible_Host_Dev4', 'size': 2, 'cap_unit': 'GB'}
+2020-01-16 04:17:13,603 dellemc_powermax_storagegroup.py INFO : Add existing volume(s) to storage group Ansible_Host_SG
+2020-01-16 04:17:13,717 dellemc_powermax_storagegroup.py INFO : The given volumes [] are already present in storage group Ansible_Host_SG
+2020-01-16 04:17:13,717 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Diamond', 'base_slo_name': 'Diamond', 'service_level': 'Diamond', 'srp': 'SRP_1', 'slo_compliance': 'STABLE', 'num_of_vols': 4, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 1, 'num_of_snapshots': 0, 'cap_gb': 5.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'maskingview': ['Ansible_Host_MV'], 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 04:17:13,717 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:17:14,239 dellemc_powermax_host.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:17:14,240 dellemc_powermax_host.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:17:14,240 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:17:14,280 dellemc_powermax_host.py INFO : Adding initiators to host Ansible_Host_IG
+2020-01-16 04:17:14,280 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:17:14,288 dellemc_powermax_host.py INFO : Initiators are already present in host Ansible_Host_IG
+2020-01-16 04:17:14,288 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:17:14,295 dellemc_powermax_host.py INFO : changed False
+2020-01-16 04:17:14,784 dellemc_powermax_portgroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:17:14,784 dellemc_powermax_portgroup.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 04:17:14,784 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 04:17:14,817 dellemc_powermax_portgroup.py INFO : Adding ports to port group Ansible_Host_PG
+2020-01-16 04:17:14,825 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 04:17:15,318 dellemc_powermax_maskingview.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:17:15,318 dellemc_powermax_maskingview.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 04:17:15,351 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 04:17:15,367 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 04:19:26,135 dellemc_powermax_maskingview.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:26,135 dellemc_powermax_maskingview.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 04:19:26,165 dellemc_powermax_maskingview.py INFO : Getting masking view Ansible_Host_MV details
+2020-01-16 04:19:26,172 dellemc_powermax_maskingview.py INFO : Delete masking view Ansible_Host_MV 
+2020-01-16 04:19:27,888 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:27,888 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:19:27,888 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:19:27,935 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 04:19:27,935 dellemc_powermax_storagegroup.py INFO : Get volumes for storage group Ansible_Host_SG
+2020-01-16 04:19:27,935 dellemc_powermax_storagegroup.py INFO : Getting the list of volumes from storage group Ansible_Host_SG
+2020-01-16 04:19:27,954 dellemc_powermax_storagegroup.py INFO : 4 volumes present in storage group Ansible_Host_SG
+2020-01-16 04:19:27,955 dellemc_powermax_storagegroup.py INFO : Found storage group {'storageGroupId': 'Ansible_Host_SG', 'slo': 'Diamond', 'base_slo_name': 'Diamond', 'service_level': 'Diamond', 'srp': 'SRP_1', 'slo_compliance': 'STABLE', 'num_of_vols': 4, 'num_of_child_sgs': 0, 'num_of_parent_sgs': 0, 'num_of_masking_views': 0, 'num_of_snapshots': 0, 'cap_gb': 5.01, 'device_emulation': 'FBA', 'type': 'Standalone', 'unprotected': True, 'compression': True, 'VPSaved': '100.0%', 'vp_saved_percent': 100.0}
+2020-01-16 04:19:27,955 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:19:28,311 dellemc_powermax_storagegroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:28,311 dellemc_powermax_storagegroup.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:19:28,311 dellemc_powermax_storagegroup.py INFO : Getting storage group Ansible_Host_SG details
+2020-01-16 04:19:28,339 dellemc_powermax_storagegroup.py INFO : The storage group False needs to be modified and the modified param are {} 
+2020-01-16 04:19:28,339 dellemc_powermax_storagegroup.py INFO : Delete storage group Ansible_Host_SG 
+2020-01-16 04:19:31,001 dellemc_powermax_volume.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:31,002 dellemc_powermax_volume.py INFO : Got PyU4V instance for provisioning on to VMAX 
+2020-01-16 04:19:31,002 dellemc_powermax_volume.py INFO : Getting volume 00089 details using native id
+2020-01-16 04:19:31,152 dellemc_powermax_volume.py INFO : Deleting volume 00089 
+2020-01-16 04:19:35,611 dellemc_powermax_volume.py INFO : Getting volume 00089 details using native id
+2020-01-16 04:19:35,686 dellemc_powermax_volume.py ERROR : Got error The requested resource was not found: Error get volume. The status code received is 404 and the message is {'message': 'Volume [00089] on Symmetrix [000197600156] cannot be found'}. while getting details of volume The requested resource was not found: Error get volume. The status code received is 404 and the message is {'message': 'Volume [00089] on Symmetrix [000197600156] cannot be found'}.
+2020-01-16 04:19:36,019 dellemc_powermax_volume.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:36,019 dellemc_powermax_volume.py INFO : Got PyU4V instance for provisioning on to VMAX 
+2020-01-16 04:19:36,019 dellemc_powermax_volume.py INFO : Getting volume 0009A details using native id
+2020-01-16 04:19:36,111 dellemc_powermax_volume.py INFO : Deleting volume 0009A 
+2020-01-16 04:19:40,573 dellemc_powermax_volume.py INFO : Getting volume 0009A details using native id
+2020-01-16 04:19:40,647 dellemc_powermax_volume.py ERROR : Got error The requested resource was not found: Error get volume. The status code received is 404 and the message is {'message': 'Volume [0009A] on Symmetrix [000197600156] cannot be found'}. while getting details of volume The requested resource was not found: Error get volume. The status code received is 404 and the message is {'message': 'Volume [0009A] on Symmetrix [000197600156] cannot be found'}.
+2020-01-16 04:19:40,984 dellemc_powermax_volume.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:40,984 dellemc_powermax_volume.py INFO : Got PyU4V instance for provisioning on to VMAX 
+2020-01-16 04:19:40,984 dellemc_powermax_volume.py INFO : Getting volume 000FC details using native id
+2020-01-16 04:19:41,066 dellemc_powermax_volume.py INFO : Deleting volume 000FC 
+2020-01-16 04:19:45,542 dellemc_powermax_volume.py INFO : Getting volume 000FC details using native id
+2020-01-16 04:19:45,642 dellemc_powermax_volume.py ERROR : Got error The requested resource was not found: Error get volume. The status code received is 404 and the message is {'message': 'Volume [000FC] on Symmetrix [000197600156] cannot be found'}. while getting details of volume The requested resource was not found: Error get volume. The status code received is 404 and the message is {'message': 'Volume [000FC] on Symmetrix [000197600156] cannot be found'}.
+2020-01-16 04:19:45,974 dellemc_powermax_volume.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:45,974 dellemc_powermax_volume.py INFO : Got PyU4V instance for provisioning on to VMAX 
+2020-01-16 04:19:45,974 dellemc_powermax_volume.py INFO : Getting volume 00100 details using native id
+2020-01-16 04:19:46,060 dellemc_powermax_volume.py INFO : Deleting volume 00100 
+2020-01-16 04:19:50,500 dellemc_powermax_volume.py INFO : Getting volume 00100 details using native id
+2020-01-16 04:19:50,628 dellemc_powermax_volume.py ERROR : Got error The requested resource was not found: Error get volume. The status code received is 404 and the message is {'message': 'Volume [00100] on Symmetrix [000197600156] cannot be found'}. while getting details of volume The requested resource was not found: Error get volume. The status code received is 404 and the message is {'message': 'Volume [00100] on Symmetrix [000197600156] cannot be found'}.
+2020-01-16 04:19:51,121 dellemc_powermax_host.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:51,121 dellemc_powermax_host.py INFO : Got PyU4V instance for provisioning on PowerMax 
+2020-01-16 04:19:51,121 dellemc_powermax_host.py INFO : Getting host Ansible_Host_IG details
+2020-01-16 04:19:51,164 dellemc_powermax_host.py INFO : Delete host Ansible_Host_IG 
+2020-01-16 04:19:52,583 dellemc_powermax_host.py INFO : changed True
+2020-01-16 04:19:53,074 dellemc_powermax_portgroup.py INFO : universion_details: {'is_valid_universion': True, 'user_message': ''}
+2020-01-16 04:19:53,074 dellemc_powermax_portgroup.py INFO : Got PyU4V instance for provisioning on PowerMax
+2020-01-16 04:19:53,074 dellemc_powermax_portgroup.py INFO : Getting port group Ansible_Host_PG details
+2020-01-16 04:19:53,108 dellemc_powermax_portgroup.py INFO : Delete post group Ansible_Host_PG 

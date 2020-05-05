@@ -1,0 +1,9 @@
+---
+vcenter_hostname: xx.xx.xx.xx
+vcenter_user: administrator@vsphere.local
+vcenter_pass: xxxxxxx
+dc: xxxxxxx
+cluster_name: xxxxxxx
+datastore_name: xxxxxxx
+vswitch: xxxxxxx
+vmtemplate: xxxxxxx

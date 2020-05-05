@@ -1,0 +1,20 @@
+---
+
+- name: 'Install required packages'
+  yum:
+    name:
+      - iscsi-initiator-utils
+    state: latest
+  become: true
+  when: ansible_facts.distribution == 'RedHat' and ansible_facts.distribution_major_version > '5'
+
+
+- name: Install required packages
+  apt: 
+    pkg:
+      - lsscsi
+      - open-iscsi
+      - sg3-utils
+    state: latest
+  become: true
+  when: ansible_facts.distribution == 'Ubuntu' and ansible_facts.distribution_major_version == '18'  

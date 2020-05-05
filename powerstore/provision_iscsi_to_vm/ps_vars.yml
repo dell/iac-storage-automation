@@ -1,0 +1,48 @@
+---
+array_ip: xx.xx.xx.xx
+user: 'admin'
+password: xxxxxxx
+verifycert: False
+iscsi_target: xx.xx.xx.xx
+
+protection_policies:
+  - protpolicy_name: ansible_protection_policy1
+    description: Ansible Protection Policy 1
+    snapshotrules:
+      - ansible_snapshot_by_interval1
+      - ansible_snapshot_by_datetime1
+
+  - protpolicy_name: ansible_protection_policy2
+    description: Ansible Protection Policy 2
+    snapshotrules:
+      - ansible_snapshot_by_interval2
+      - ansible_snapshot_by_datetime2
+
+snapshot_rules:
+  - rulename: 'ansible_snapshot_by_interval1'
+    snapint: 'Four_Hours'
+    days_of_week: [ 'Monday' ]
+    time_of_day: ''
+    retention: '24'
+    delete_snaps: True
+
+  - rulename: 'ansible_snapshot_by_interval2'
+    snapint: 'Eight_Hours'
+    days_of_week: [ 'Tuesday', 'Thursday' ]
+    time_of_day: ''
+    retention: '72'
+    delete_snaps: True
+
+  - rulename: 'ansible_snapshot_by_datetime1'
+    # snapint: 'One_Hour'
+    days_of_week: [ 'Monday', 'Tuesday', 'Wednesday' ]
+    time_of_day: '01:00'
+    retention: '24'
+    delete_snaps: True
+
+  - rulename: 'ansible_snapshot_by_datetime2'
+    # snapint: 'One_Hour'
+    days_of_week: [ 'Saturday', 'Sunday' ]
+    time_of_day: '01:00'
+    retention: '72'
+    delete_snaps: True

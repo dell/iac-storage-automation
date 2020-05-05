@@ -1,0 +1,40 @@
+---
+- name: Protection policy operations on Dell EMC Powerstore
+  hosts: localhost
+  connection: local
+  vars_files:
+    - ps_vars.yml
+  vars:
+  tags: create_protection_policy
+  tasks:
+    - name: Create new protection policy with snapshot rule
+      dellemc_powerstore_protectionpolicy:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        name: "{{ item.protpolicy_name }}"
+        description: "{{ item.description }}"
+        snapshotrules: "{{ item.snapshotrules }}"
+        snapshotrule_state: "present-in-policy"
+        state: "present"
+      register: protectionpolicy
+      loop: "{{ protection_policies }}"
+
+    - debug:
+        var: protectionpolicy
+      tags: debug
+
+    - name: Get details of protection policy by name
+      dellemc_powerstore_protectionpolicy:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        name: "{{ item.protpolicy_name }}"
+        state: "present"
+      register: protectionpolicy
+      loop: "{{ protection_policies }}"
+
+    - debug:
+        var: protectionpolicy

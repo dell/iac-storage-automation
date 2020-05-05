@@ -1,0 +1,38 @@
+# Variable File containing cluster volume config and storage group details
+---
+# Main Variable Inputs for Playbook
+portgroup_name: Ansible_Host_PG
+mv_name: Ansible_Host_MV
+sg_name: Ansible_Host_SG
+host_name: Ansible_Host_IG
+
+# Ports to be Used
+
+port_list:
+  - director_id: FA-1D
+    port_id: 8 
+  - director_id: FA-2D
+    port_id: 8
+
+# Host Initiators
+
+host_initiators:
+  - 10000000cabffaee
+  - 10000000cccffaef
+
+# Storage Definition
+    
+volume_list:
+  - vol_name: Ansible_Host_Dev1
+    size: 1
+    cap_unit: GB
+  - vol_name: Ansible_Host_Dev2
+    size: 1
+    cap_unit: GB
+  - vol_name: Ansible_Host_Dev3
+    size: 1
+    cap_unit: GB
+  - vol_name: Ansible_Host_Dev4
+    size: 2 
+    cap_unit: GB
+

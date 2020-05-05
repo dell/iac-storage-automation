@@ -1,0 +1,36 @@
+---
+- name: Create snapshots on Dell EMC PowerStore
+  hosts: all
+  vars_files: 
+    - ps_vars.yml
+  vars:
+  tasks:
+    - name: Create volume snapshot on PowerStore
+      dellemc_powerstore_snapshot:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        volume: "{{ item.volname }}"
+        state: "present"
+        snapshot_name: "{{ snapshot_name }}"
+        description: "Created by Ansible"
+        desired_retention: "{{ snapshot_retention }}"
+        retention_unit: "{{ snapshot_retention_unit }}"
+      register: snapshot_reults
+      loop: "{{ volumes }}"
+      delegate_to: localhost
+
+    - name: Get details of a volume snapshot
+      dellemc_powerstore_snapshot:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        volume: "{{ item.volname }}"
+        snapshot_name: "{{ snapshot_name}}"
+        state: "present"
+      loop: "{{ volumes }}"
+      register: snapshot_details
+      delegate_to: localhost
+      

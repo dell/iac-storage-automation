@@ -1,0 +1,19 @@
+host1_name: Ansible_Cluster_Host1_IG
+host2_name: Ansible_Cluster_Host2_IG
+host3_name: Ansible_Cluster_Host3_IG
+hostgroup_name: Ansible_Cluster_IG
+
+# Host Initiators
+
+host1_initiators:
+  - 10000000c98ffaee
+  - 10000000c98ffaef
+
+host2_initiators:
+  - 10000000c98ffffe
+  - 10000000c98ffafe
+
+host3_initiators:
+  - 10000000d98ffffe
+  - 10000000d98ffafe
+

@@ -1,0 +1,20 @@
+---
+- name: Configure VM guest OS
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    # - name: show distribution
+    #   debug:
+    #     var: ansible_facts
+    #   tags: debug
+
+    - name: Import linux-system role
+      import_role:
+        name: linux-system-role
+      tags: configvms
+
+    - name: Import iscsi role
+      import_role:
+        name: config-iscsi-client
+      tags: configiscsi

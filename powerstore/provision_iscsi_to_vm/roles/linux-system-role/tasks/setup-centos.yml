@@ -1,0 +1,114 @@
+- name: Install infrastructure packages
+  yum: 
+    name:
+      - lsscsi
+      - sg3_utils
+      - nfs*
+      - autofs
+      - iscsi-initiator-utils
+      - yum-plugin-security
+      - device-mapper-multipath
+      - java-1.8.0-openjdk
+      - java-1.8.0-openjdk-devel
+      - epel-release
+    state: latest
+  register: yum_results
+  tags: install_pkgs
+
+- name: Install Python 3
+  yum:
+    name: 
+      - python2-pip
+      - python3
+      - python3-pip
+      - python3-setuptools
+      - openssl-devel 
+      - bzip2-devel 
+      - libffi-devel
+      - libxml2
+      - libxml2-devel
+      - libxml2-python
+      - libxml2-static
+      - libxslt
+      - libxslt-devel
+      - libxslt-python
+    state: latest
+  tags: install_python3
+
+- name: Populate service facts
+  service_facts:
+  tags: services
+
+- name: Configure services
+  service:
+    name: '{{ item.name }}'
+    enabled: '{{ item.enable }}'
+    state: '{{ item.state }}'
+  register: service_results
+  when: "item.name in services"
+  loop: 
+    - { name: firewalld.service, enable: no, state: stopped }
+    - { name: avahi-daemon.service, enable: no, state: stopped }
+    - { name: irqbalance.service, enable: no, state: stopped }
+    - { name: iptables.service, enable: no, state: stopped }
+    - { name: ip6tables.service, enable: no, state: stopped }
+    - { name: autofs.service, enable: yes, state: started }
+  ignore_errors: True
+  tags: services
+
+- name: Disable SELinux
+  selinux: 
+    state:  disabled
+  tags: disable_selinux
+
+- name: Change TimeZone
+  timezone:
+    name: America/Chicago
+  tags: config_timezone
+
+#- name: Configure chrony
+#  include_role:
+#    name: ericsysmin.chrony
+#  vars:
+#    chrony_config_server: '{{ dns }}'
+#    chrony_service_enabled: yes
+#    chrony_service_state: started
+#    chrony_pkg_state: present
+#  tags: config_chrony
+
+- name: Include multipath
+  import_role:
+    name: config-multipath
+  tags: config-multipath
+
+- name: Update all packages
+  yum: 
+    name: '*' 
+    state: latest
+  tags: update_all_packages
+
+- name: check for reboot hint
+  shell: if [ $(rpm -q --last kernel | awk 'NR==1 {print $1}') != kernel-$(uname -r) ]; then echo 'reboot'; else echo 'Kernel is current'; fi
+  ignore_errors: true
+  register: reboot_hint
+
+# - debug:
+#     msg: "{{ reboot_hint.stdout }}"
+
+- name: Rebooting when there's a kernel change ...
+  reboot:
+      reboot_timeout: 3600
+  ignore_errors: true
+  when: "reboot_hint.stdout == 'reboot'"
+  register: rebooting
+
+- name: Wait for computer to reboot...
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 3600
+  when: rebooting.changed
+
+
+

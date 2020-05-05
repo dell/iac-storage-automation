@@ -1,0 +1,19 @@
+[all:children]
+vm_group
+
+[vm_group]
+test-vm01
+test-vm02
+
+
+[all:vars]
+mgmt_network_name=xxxxxxx
+mgmt_netmask=xx.xx.xx.xx
+mgmt_gateway=xx.xx.xx.xx 
+storage_network_name=xxxxxxx
+storage_netmask=xx.xx.xx.xx
+dns="[ 'xx.xx.xx.xx', 'yy.yy.yy.yy' ]" 
+domain=xxxxxxx 
+dns_suffix="[ 'xxxxxxx', 'xxxxxxx' ]" 
+
+

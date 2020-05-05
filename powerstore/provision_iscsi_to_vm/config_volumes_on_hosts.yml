@@ -1,0 +1,115 @@
+---
+- name: Configure volumes on hosts
+  hosts: all
+  gather_facts: true
+  vars_files:
+    - ps_vars.yml
+  vars:
+  tasks:
+    - name: Get volume details using name
+      dellemc_powerstore_volume:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        vol_name: "{{ item.volname }}"
+        state: "present"
+      register: volume_results
+      loop: "{{ volumes }}"
+      delegate_to: localhost
+
+    - debug:
+        var: volume_results.results
+      tags: debug
+
+    - name: Parse out volume information from volume_results.results
+      debug:
+        msg: 
+          - "Volume is {{ item.0.item.volname }}"
+          - "WWN is {{ item.0.volume_details.wwn | regex_replace('naa.') }}"
+          - "LUN is {{ item.1.logical_unit_number }}"
+      with_subelements:
+        - "{{ volume_results.results }}"
+        - volume_details.hlu_details 
+      tags: debug 
+
+    - name: Set fact for volume wwns
+      set_fact:
+        device_wwns: "{{ device_wwns|default({}) | combine( {item.0.item.volname: item.0.volume_details.wwn | regex_replace('naa.')} ) }}"
+      with_subelements:
+        - "{{ volume_results.results }}"
+        - volume_details.hlu_details  
+    
+    - debug:
+        msg:
+          - "Here are the devices' WWNs:" 
+          - "{{ device_wwns }}"
+          - "{{ device_wwns.keys() }}"
+      tags: debug
+
+    - debug:
+        msg: 
+          - "Looking up the fs based on fs"
+          - "Found {{ item.volname }}"
+          - "The mount path is {{ item.mount_path }}"
+          - "The WWN is {{ device_wwns[item.volname] }}"
+      loop: "{{ fs }}"
+      tags: debug
+  
+    - name: Scan scsi bus on host
+      shell: /usr/bin/rescan-scsi-bus.sh
+      register: result
+
+    - debug:
+        var: result
+      tags: debug
+
+    - name: Detect the multipath device id based on WWNs
+      shell: 'multipath -l | sed -ne "s/\([^ ]*\).*{{ device_wwns[item.volname] }}.*/\1/p"'
+      loop: "{{ fs }}" 
+      register: multipath_id
+
+    - debug:
+        var: multipath_id.results
+      tags: debug
+
+    - name: Set facts for multipath id and filesystem
+      set_fact:
+        fs_mpath: "{{ fs_mpath|default([]) + [ {'mount_path': item.item.mount_path, 'volname': item.item.volname, 'fstype': item.item.fstype, 'mpath': item.stdout} ] }}"
+      loop: "{{ multipath_id.results }}"   
+
+    - debug:
+        var: fs_mpath
+      tags: debug
+
+    - name: Create file system on volume
+      filesystem:
+        fstype: "{{ item.fstype }}"
+        dev: "/dev/mapper/{{ item.mpath }}"
+        opts: -fK
+      when: 
+      - item.mpath is defined
+      - item.mpath|trim != '' 
+      loop: "{{ fs_mpath }}"
+
+    - name: Ensure the base dir for the mount point exists 
+      file:
+        path: "{{ item.mount_path|dirname }}"
+        state: directory
+      when: 
+      - item.mount_path is defined
+      - item.mount_path|trim != ''
+      loop: "{{ fs_mpath }}"
+
+    - name: Mount the file system
+      mount:
+        src: "/dev/mapper/{{ item.mpath }}"
+        path: "{{ item.mount_path }}"
+        opts: _netdev
+        fstype: "{{ item.fstype }}" 
+        state: mounted
+      when: 
+      - item.mount_path is defined
+      - item.mount_path|trim != ''
+      loop: "{{ fs_mpath }}"
+

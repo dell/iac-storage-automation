@@ -1,0 +1,32 @@
+---
+- name: Add hosts to PowerStore
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - ps_vars.yml
+  vars:
+  tasks:
+  #Query the host's iqn
+  - name: Gather facts for host
+    setup:
+      filter: ansible_iscsi_iqn
+
+  - name: iSCSI iqn on hosts
+    debug:
+      msg: "The iqn for {{ inventory_hostname }} is {{ ansible_iscsi_iqn }}."
+
+  - name: Add host to PowerStore
+    dellemc_powerstore_host:
+      array_ip: "{{ array_ip }}"
+      verifycert: "{{ verifycert }}"
+      user: "{{ user }}"
+      password: "{{ password }}"
+      host_name: "{{ inventory_hostname }}"
+      os_type: "{{ os_type }}"
+      initiators: "{{ ansible_iscsi_iqn }}"
+      state: present
+      initiator_state: present-in-host
+    register: createhost_result
+    delegate_to: localhost
+    tags: 
+      - add_hosts

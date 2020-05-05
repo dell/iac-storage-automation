@@ -1,0 +1,10 @@
+---
+- name: "Ensure the iSCSI service is running (and restarted)"
+  service:
+    name: iscsid
+    state: restarted
+    
+- name: "Discover and Login to the available iSCSI targets"
+  command: /usr/sbin/iscsiadm -m discovery -t st -p {{ iscsi_target }} --login
+  register: results
+

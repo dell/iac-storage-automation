@@ -1,0 +1,86 @@
+---
+- name: Protecting a Storage Group with SRDF
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars_files/connection.yml
+    - vars_files/credentials.yml
+
+  vars:
+    remote_serial: "{{ remote_serial }}"
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  tasks:
+
+    - name: Get Storage Group Details
+      register: storage_details
+      dellemc_powermax_storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "{{ sg_name }}"
+        service_level: "Diamond"
+        state: 'present'
+
+    - set_fact:
+        source_volumes_before: "{{storage_details.storage_group_volumes | list}}"
+
+    - debug:
+        var:  source_volumes_before
+
+
+    - name: add new device to SRDF configuration
+      uri:
+        url: "https://{{ unispherehost }}:8443/univmax/restapi/91/sloprovisioning/symmetrix/{{ serial_no }}/storagegroup/{{ sg_name }}"
+        validate_certs: false
+        user: "{{ user }}"
+        password: "{{ password }}"
+        timeout: 200
+        headers:
+          Content-Type: "application/json"
+        method: PUT
+        body_format: json
+        body: {"editStorageGroupActionParam": {
+            "expandStorageGroupParam": {
+                "addVolumeParam": {
+                    "emulation": "FBA",
+                    "create_new_volumes": False,
+                    "volumeAttributes": [{
+                        "num_of_vols": 1,
+                        "volumeIdentifier": {
+                            "identifier_name": "test",
+                            "volumeIdentifierChoice": "identifier_name_plus_volume_id"},
+                        "volume_size": 1,
+                        "capacityUnit": "GB"}],
+                    "remoteSymmSGInfoParam": {
+                        "remote_symmetrix_1_id": "{{ remote_array }}",
+                        "remote_symmetrix_1_sgs": ["{{ sg_name }}"],
+                    }}}}}
+        status_code:
+          - 200
+          - 201
+      register: response
+      changed_when: true
+      ignore_errors: true
+
+    - name: Get Storage Group Details
+      register: storage_details
+      dellemc_powermax_storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "{{ sg_name }}"
+        service_level: "Diamond"
+        state: 'present'
+
+    - set_fact:
+        source_volumes_after: "{{storage_details.storage_group_volumes | list}}"
+
+    - debug:
+        msg:   "New Devices Added"
+
+    - debug:
+        msg:   "{{  source_volumes_after | difference(source_volumes_before) | list }}"

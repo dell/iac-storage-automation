@@ -1,0 +1,36 @@
+---
+- name: Create volumes on PowerStore and map volumes to host
+  hosts: all 
+  vars_files:
+    - ps_vars.yml
+  vars:
+  tasks:
+    - name: Create volumes on PowerStore
+      dellemc_powerstore_volume:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        vol_name: "{{ item.volname }}"
+        size: "{{ item.volsize }}"
+        cap_unit: "{{ item.volcapunit }}"
+        state: present
+        description: "{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
+        protection_policy: "{{ item.protpolicy }}"
+        performance_policy: "{{ item.volperfpol }}"
+      register: result_vol    
+      loop: "{{ volumes }}"
+      delegate_to: localhost
+
+    - name: Map volumes to hosts using host name
+      dellemc_powerstore_volume:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        vol_name: "{{ item.volname }}"
+        host: "{{ inventory_hostname }}"
+        mapping_state: mapped
+        state: present
+      loop: "{{ volumes }}"
+      delegate_to: localhost

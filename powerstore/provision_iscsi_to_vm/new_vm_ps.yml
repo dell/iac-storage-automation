@@ -1,0 +1,62 @@
+---
+- name: Create VMs on vCenter from template
+  hosts: all
+  gather_facts: false
+  connection: local
+  vars_files:
+    - vcenter_vars.yml
+  vars:
+    notes: Created by Ansible
+    dumpfacts: False
+  tasks:
+    - name: Create VM from template
+      vmware_guest:
+        validate_certs: False
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_user }}"
+        password: "{{ vcenter_pass }}"
+        cluster: "{{ cluster_name }}"
+        datacenter: "{{ dc }}"
+        datastore: "{{ datastore_name }}"
+        folder: vm 
+        name: "{{ inventory_hostname }}"
+        template: "{{ vmtemplate }}"
+        networks:
+        # Define the VM public network
+        - name: "{{ mgmt_network_name | default('VM Network') }}"
+          dvswitch_name: "{{ vswitch }}"
+          type: dhcp
+          device_type: vmxnet3
+          start_connected: True
+        # Define the VM iSCSI network
+        - name: "{{ storage_network_name }}"
+          dvswitch_name: "{{ vswitch }}"
+          type: static
+          ip: "{{ storage_ip }}"
+          netmask: "{{ storage_netmask }}"
+          device_type: vmxnet3
+          start_connected: True
+        hardware:
+          memory_mb: "{{ vm_memory | default(1024) }}"
+          num_cpus: " {{ vm_cpus | default(1) }}"
+        state: poweredon
+        customization:
+          hostname: "{{ inventory_hostname }}"
+          dns_servers: "{{ dns }}"
+          domain: "{{ domain }}"
+          dns_suffix: "{{ dns_suffix }}"
+        wait_for_ip_address: False
+        wait_for_customization: False
+      register: newvms
+      tags: newvms
+
+    - debug:
+        var: newvms
+      tags: debug
+
+    - pause:
+        seconds: 60
+      tags: debug
+
+
+

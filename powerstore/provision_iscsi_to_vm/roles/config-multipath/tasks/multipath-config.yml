@@ -1,0 +1,23 @@
+---
+
+- name: "Configure MultiPath configuration"
+  copy:
+    src: "{{ role_path }}/files/multipath.conf"
+    dest: /etc/multipath.conf
+    owner: root
+    group: root
+    mode: 0644
+  register: multipathconf
+
+- debug:
+    var: multipathconf
+
+- name: 'restart multipathd'
+  service:
+    name: multipathd
+    state: restarted
+  when: 
+  - multipathconf.changed 
+
+
+

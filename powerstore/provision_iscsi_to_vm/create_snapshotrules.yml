@@ -1,0 +1,63 @@
+---
+- name: Snapshot rule operations on Dell EMC Powerstore
+  hosts: localhost
+  connection: local
+  vars_files:
+    - ps_vars.yml
+  vars:
+  tags: create_snapshot_rules
+
+  tasks:
+    - name: Create snapshot rule by interval
+      dellemc_powerstore_snapshotrule:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        name: "{{ item.rulename }}"
+        interval: "{{ item.snapint }}"
+        days_of_week: "{{ item.days_of_week }}"
+        time_of_day: "{{ item.time_of_day }}"
+        desired_retention: "{{ item.retention }}"
+        state: "present"
+      register: snaprule_result
+      loop: "{{ snapshot_rules }}"
+      when: item.snapint is defined
+
+    - debug:
+        var: snaprule_result
+      tags: debug
+
+    - name: Create snapshot rule by date time
+      dellemc_powerstore_snapshotrule:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        name: "{{ item.rulename }}"
+        days_of_week: "{{ item.days_of_week }}"
+        time_of_day: "{{ item.time_of_day }}"
+        desired_retention: "{{ item.retention }}"
+        state: "present"
+      register: snaprule_result
+      loop: "{{ snapshot_rules }}"
+
+    - debug:
+         var: snaprule_result
+      tags: debug
+
+    - name: Get details of existing snapshot rule by name
+      dellemc_powerstore_snapshotrule:
+        array_ip: "{{ array_ip }}"
+        verifycert: "{{ verifycert }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        name: "{{ item.rulename }}"
+        state: "present"
+      register: snaprule_result
+      loop: "{{ snapshot_rules }}"
+
+    - debug:
+        var: snaprule_result
+      tags: debug
+

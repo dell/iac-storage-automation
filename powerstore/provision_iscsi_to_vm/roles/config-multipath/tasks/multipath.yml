@@ -1,0 +1,7 @@
+---
+
+- import_tasks: prereq.yml
+  tags: config-multipath
+
+- import_tasks: multipath-config.yml
+  tags: config-multipath
