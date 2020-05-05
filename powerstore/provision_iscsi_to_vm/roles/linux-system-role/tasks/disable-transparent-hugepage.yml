@@ -1,0 +1,42 @@
+- name: Search for transparent hugepages
+  shell: "grep -i hugepage /etc/default/grub"
+  register: presence
+  ignore_errors: True
+
+- name: reveal
+  debug:
+    msg: "Transparent hugepage is presence."
+  when: presence is success
+
+- name: Add transparent_hugepage=never to grub
+  replace: 
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
+    replace: 'GRUB_CMDLINE_LINUX="\1 transparent_hugepage=never"'
+  when: presence is failed
+  register: grub2
+
+- name: Search for transparent hugepages
+  shell: "grep -i hugepage /etc/default/grub"
+  register: presence
+  ignore_errors: True
+
+- name: reveal
+  debug:
+    msg: "Transparent hugepage is presence."
+  when: presence is success 
+
+- name: Remake grub
+  shell: "grub2-mkconfig -o /boot/grub2/grub.cfg"
+  when: grub2 is changed 
+
+- name: Disable transparent hugepage at runtime
+  shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+- name: transparent_hugepage status
+  shell: cat /sys/kernel/mm/transparent_hugepage/enabled
+  register: result
+
+- name: Show current transparent hugepage status
+  debug:
+    msg: "Current transparent_hugepage status: {{ result.stdout_lines[0] }}"

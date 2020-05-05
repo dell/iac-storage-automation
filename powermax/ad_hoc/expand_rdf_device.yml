@@ -1,0 +1,70 @@
+---
+- name: Provisioning storage for Powermax
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - connection.yml
+    - credentials.yml
+
+  vars:
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  tasks:
+    - name: Get Volume Details
+      dellemc_powermax_volume:
+        <<: *uni_connection_vars
+        vol_id: "{{ volume_id }}"
+        state: "Present"
+      register: voldetails
+
+    - debug:
+        var: voldetails
+
+    - set_fact:
+        volume_rdf_group: "{{ voldetails.volume_details.rdfGroupId[0].rdf_group_number }}"
+
+    - debug:
+        var: volume_rdf_group
+
+    - name: Expand_SRDF_Device
+      uri:
+        url: "https://{{ unispherehost }}:8443/univmax/restapi/91/sloprovisioning/symmetrix/{{ serial_no }}/volume/{{ volume_id }}"
+        validate_certs: false
+        user: "{{ user }}"
+        password: "{{ password }}"
+        timeout: 200
+        headers:
+          Content-Type: "application/json"
+        method: PUT
+        body_format: json
+        body: { "editVolumeActionParam": {
+                  "expandVolumeParam": {
+                    "volumeAttribute": {
+                      "volume_size": "{{ New_Size }}",
+                      "capacityUnit": "GB"},
+                      "rdfGroupNumber": "{{ volume_rdf_group }}"
+                      }}
+              }
+        status_code:
+          - 200
+          - 201
+      register: response
+      changed_when: true
+      ignore_errors: true
+
+    - name: Get Volume Details
+      dellemc_powermax_volume:
+        <<: *uni_connection_vars
+        vol_id: "{{ volume_id }}"
+        state: "Present"
+      register: volume_after
+
+    - debug:
+        var: volume_after

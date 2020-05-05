@@ -1,0 +1,6 @@
+---
+# Variables file 'vars.yml' in the same folder as the playbook
+serial_no: "000197600156"
+unispherehost: "unisphere4powermax"
+universion: "90"
+verifycert: false

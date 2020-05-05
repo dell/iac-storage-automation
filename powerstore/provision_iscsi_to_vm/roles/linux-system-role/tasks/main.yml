@@ -1,0 +1,4 @@
+---
+
+- include: 'setup-{{ ansible_facts.distribution | lower }}.yml'
+- include: 'add-ssh-public-keys.yml'

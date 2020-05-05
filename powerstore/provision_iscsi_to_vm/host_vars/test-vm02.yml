@@ -1,0 +1,35 @@
+storage_protocol: iscsi
+storage_ip: xx.xx.xx.xx
+os_type: Linux
+disk_vendor: PowerStore
+snapshot_name: "snapshot-{{ inventory_hostname }}-{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
+snapshot_retention: "3"
+snapshot_retention_unit: days
+
+volumes:
+  - volname: data_volume_3
+    vgname: ''
+    volsize: 100
+    volcapunit: 'GB'
+    voldesc: "{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
+    volperfpol: high
+    protpolicy: ansible_protection_policy1
+
+  - volname: data_volume_4
+    vgname: ''
+    volsize: 100
+    volcapunit: 'GB'
+    voldesc: "{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
+    volperfpol: high
+    protpolicy: ansible_protection_policy2
+
+fs:
+  - mount_path: /data/fs1
+    volname: data_volume_3
+    fstype: xfs
+
+  - mount_path: /data/fs2
+    volname: data_volume_4
+    fstype: xfs
+
+

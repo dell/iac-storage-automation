@@ -1,0 +1,66 @@
+---
+- name: Add volume to Host created with 1.0 playbook Powermax Storage Example
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars_files/connection.yml
+    - vars_files/credentials.yml
+    - vars_files/1.2vars/host_storage_details_new_vol.yml
+
+  vars:
+    mv_name: "{{ mv_name }}"
+    portgroup_name: "{{ portgroup_name }}"
+    hostgroup_name: "{{ hostgroup_name }}"
+    sg_name: "{{ sg_name }}"
+    vol_name: "Ansible_vol"
+
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  tasks:
+    - name: Create Storage group
+      dellemc_powermax_storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "{{ sg_name }}"
+        service_level: "Diamond"
+        state: 'present'
+
+    - name: Create new volumes for existing SG
+      dellemc_powermax_storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "{{ sg_name }}"
+        state: "present"
+        volumes: "{{ volume_list }}"
+        vol_state: "present-in-group"
+
+    - name: Create host "{{ host1_name }}"
+      dellemc_powermax_host:
+        <<: *uni_connection_vars
+        host_name: "{{ host_name }}"
+        initiators: "{{ host_initiators }}"
+        state: 'present'
+        initiator_state: 'present-in-host'
+
+    - name: Create port group "{{ portgroup_name }}"
+      dellemc_powermax_portgroup:
+        <<: *uni_connection_vars
+        portgroup_name: "{{ portgroup_name }}"
+        state: "present"
+        ports:  "{{ port_list }}"
+        port_state: 'present-in-group'
+
+    - name: Create MV "{{ mv_name }}" with existing elements
+      dellemc_powermax_maskingview:
+        <<: *uni_connection_vars
+        mv_name: "{{ mv_name }}"
+        portgroup_name: "{{ portgroup_name }}"
+        host_name: "{{ host_name }}"
+        sg_name: "{{ sg_name }}"
+        state: 'present'
+

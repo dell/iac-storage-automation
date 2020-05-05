@@ -1,0 +1,15 @@
+---
+
+- name: 'Install required packages for Ubuntu'
+  apt:
+    name: 
+      - multipath-tools
+      - multipath-tools-boot
+    state: latest
+  when: ansible_facts.distribution == 'Ubuntu' and ansible_facts.distribution_major_version == '18'
+
+- name: 'Install required packages for RedHat/CentOS'
+  package:
+    name: device-mapper-multipath
+    state: latest
+  when: (ansible_facts.distribution == 'RedHat' or ansible_facts.distribution == 'CentOS' ) and ansible_facts.distribution_major_version > '5'

@@ -1,0 +1,48 @@
+---
+- name: Protecting a Storage Group with SRDF
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars_files/connection.yml
+    - vars_files/credentials.yml
+    - vars_files/host_storage_details.yml
+
+  vars:
+    remote_serial: "{{ remote_serial }}"
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  tasks:
+    - name: Get SRDF State
+      dellemc_powermax_srdf:
+        <<: *uni_connection_vars
+        remote_serial_no: "{{ remote_serial }}"
+        sg_name: "{{sg_name}}"
+        srdf_mode: 'Synchronous'
+        srdf_state: 'Establish'
+        state: 'present'
+      register: srdf_state
+    
+    - debug: 
+        var: srdf_state.SRDF_link_details 
+
+    - name: Failover SRDF 
+      dellemc_powermax_srdf:
+        <<: *uni_connection_vars
+        remote_serial_no: "{{ remote_serial }}"      
+        sg_name: "{{sg_name}}"      
+        srdf_mode: 'Synchronous'      
+        srdf_state: 'Failover'      
+        state: 'present'
+        wait_for_completion: True
+      register: new_state
+    
+    - debug: 
+        var: new_state.SRDF_link_details.states
+

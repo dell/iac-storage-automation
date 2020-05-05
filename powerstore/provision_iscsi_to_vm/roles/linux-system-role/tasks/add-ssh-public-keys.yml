@@ -1,0 +1,19 @@
+- name: Add ssh public keys
+  blockinfile:
+    path: /root/.ssh/authorized_keys
+    create: yes
+    backup: yes
+    block: |
+      ssh-rsa XXXXXX root@machine
+
+- name: Add ssh config
+  blockinfile:
+    path: /root/.ssh/config
+    create: yes
+    backup: yes
+    mode: 0400
+    block: |
+      StrictHostKeyChecking no
+      VerifyHostKeyDNS no
+      ForwardX11Trusted yes
+      ForwardX11 yes
