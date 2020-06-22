@@ -1,0 +1,34 @@
+---
+#############################################################################
+##
+## Name: Create Isilon Snapshot Example
+##
+## Author: Evan Koutsandreou
+## Date: 2020/06/22
+#############################################################################
+- name: Create Isilon snapshot of /ifs/data
+  hosts: 
+    - isilon822dc1_local ### Specify "ansible_connection=local" in inventory file or host_vars
+  vars:
+    input: &isilon_variables
+      onefs_host: '192.168.21.141'
+      verify_ssl: 'False'
+      port_no: '8080'
+      api_user: 'root'
+      api_password: 'root'
+    snapName: "Ansible snapshot"
+    snapPath: '/ifs/data'
+    snapRetention: "1"
+    snapUnit: "days"
+    snapState: 'present'
+
+  tasks:
+
+  - name: Create Isilon Snapshot of "{{ snapPath }}"
+    dellemc_isilon_snapshot:
+      <<: *isilon_variables
+      path: "{{ snapPath }}"
+      snapshot_name: "{{ snapName }}"
+      desired_retention: "{{ snapRetention }}"
+      retention_unit: "{{ snapUnit }}"
+      state: "{{ snapState }}"
