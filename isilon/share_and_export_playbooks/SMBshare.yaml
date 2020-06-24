@@ -2,7 +2,8 @@
 #############################################################################
 ##
 ## Name: Isilon SMB share Example
-##
+## Comment: Please see "example_inventory_file" in repo for host references
+## 
 ## Author: Evan Koutsandreou
 ## Date: 2020/06/22
 #############################################################################

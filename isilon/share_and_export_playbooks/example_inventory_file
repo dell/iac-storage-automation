@@ -1,0 +1,8 @@
+[export_group]
+centos8 ansible_user=root ansible_password=root ansible_host=192.168.21.171
+
+[isilon_module_group]
+isilon822dc1_local ansible_password=root ansible_user=root ansible_connection=local
+
+[win_group]
+AD2019  ansible_user=administrator@KRYPTOLULA.LOCAL ansible_password=password!23@ ansible_port=5986 ansible_connection=winrm ansible_winrm_server_cert_validation=ignore ansible_host=192.168.21.180
