@@ -21,7 +21,7 @@
     match_isilon_ansible_host: isilon
     access_zone: 'System'
     exportDescr: 'Ansible NFS export'
-    exportState: 'Ansible NFS export'
+    exportState: 'present'
     nfs_path: '/ifs/data'
     mount_path: '/mnt/data'
     export_ip: '192.168.21.141'
