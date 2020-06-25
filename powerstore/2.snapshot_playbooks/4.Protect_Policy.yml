@@ -1,0 +1,33 @@
+#!/usr/bin/env ansible-playbook
+---
+- name:  Create a protection policy with snapshot rule
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+      - vars/connection.yml
+      - vars/credentials.yml
+      
+
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+  
+       
+
+  tasks:
+    - name: Create a protection policy with snapshot rule
+      dellemc_powerstore_protectionpolicy:
+        <<: *connection_vars
+        name: Ansible_policy1
+        description: ansible_policy
+        snapshotrules:
+          - "Ansible_30_minute_rule"
+        snapshotrule_state: "present-in-policy"
+        state: "present"        
+        
+       

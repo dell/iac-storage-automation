@@ -1,0 +1,34 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Gather Info
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+      - vars/connection.yml
+      - vars/credentials.yml
+
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    
+  tasks:
+    - name: Gather_facts
+      dellemc_powerstore_gatherfacts:
+        <<: *connection_vars
+        gather_subset:
+         - node
+         - host
+         - hg
+         - vol
+         - snapshot_rule
+         - protection_policy
+      register: results
+
+    - name:  Print Results
+      debug:
+        var: results

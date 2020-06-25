@@ -1,0 +1,29 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Volumes whose names match the regex pattern
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+      - vars/connection.yml
+      - vars/credentials.yml
+      - vars/cluster_hosts.yml
+
+  vars:
+    vg_name: "Ansible_VolumeGroup"
+    vol_name: 'ansible_1'
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+
+  tasks:
+    - name: Associate protection policy
+      dellemc_powerstore_volumegroup:
+        <<: *connection_vars
+        vg_name: "{{vg_name}}"
+        description: "This volume group is for ansible"
+        state: "present"
+        protection_policy: "Ansible_policy1"

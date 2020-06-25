@@ -1,0 +1,51 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Create Host For Snapshot Rules and Protection Policies
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+      - vars/connection.yml
+      - vars/credentials.yml
+      - vars/cluster_hosts.yml
+
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    host_name: 'rhel01'
+    vol_name: 'ansible_1'
+    cap_unit: 'GB'
+
+  tasks:
+    - name: Create host  {{ host1_name }}
+      dellemc_powerstore_host:
+        <<: *connection_vars
+        host_name: "{{ host1_name }}"
+        os_type: 'Linux'
+        initiators: "{{ host1_initiators }}"
+        state: 'present'
+        initiator_state: 'present-in-host'
+      
+    - name: Create volumes
+      dellemc_powerstore_volume:
+        <<: *connection_vars
+        vol_name: "{{vol_name +'_' }}{{item}}" 
+        size: 1
+        cap_unit: "{{cap_unit}}"
+        state: 'present'
+      loop: "{{ range(1, 4 + 1, 1) | list }}"
+
+
+    - name: Map volume to host {{ host1_name }}  without HLU
+      dellemc_powerstore_volume:
+        <<: *connection_vars
+        vol_name: "{{vol_name +'_' }}{{item}}" 
+        state: 'present'
+        mapping_state: 'mapped'
+        host: "{{ host1_name }}"
+      loop: "{{ range(1, 4 + 1, 1) | list }}"
+

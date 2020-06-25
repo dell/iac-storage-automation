@@ -1,0 +1,16 @@
+---
+# Main Variable Inputs for Playbook
+host1_name: Ansible_Cluster_Host1_IG
+host2_name: Ansible_Cluster_Host2_IG
+hostgroup_name: Ansible_Cluster_IG
+
+host1_initiators:
+  - 10:00:00:00:c9:8f:fa:ee
+  - 10:00:00:00:c9:8f:fa:ef
+  - 10:00:00:00:c9:8f:fb:ef
+  - 10:00:00:00:c9:8f:fb:ee
+
+host2_initiators:
+  - 10:00:00:00:c9:8f:ff:fe
+  - 10:00:00:00:c9:8f:fa:fe
+
