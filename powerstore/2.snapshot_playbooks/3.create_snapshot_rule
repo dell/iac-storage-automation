@@ -1,0 +1,31 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Snapshot Rules
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+      - vars/connection.yml
+      - vars/credentials.yml
+
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    desired_retention: '24' #Time is in hours   
+    
+  tasks:
+    - name: Create new snapshot rule by interval
+      dellemc_powerstore_snapshotrule:
+        <<: *connection_vars
+        name: "{{ 'Ansible_30_minute_rule' }}"
+        days_of_week:
+         - Monday
+         - Wednesday
+         - Friday
+        desired_retention: "{{ desired_retention }}"
+        interval: "Thirty_Minutes"
+        state: "present"

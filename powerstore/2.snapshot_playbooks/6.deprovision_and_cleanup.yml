@@ -1,0 +1,86 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Cleanup the Storage Deleting Hosts, Volumes and Mappings
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+      - vars/connection.yml
+      - vars/credentials.yml
+      - vars/cluster_hosts.yml
+
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    vol_name: 'ansible_1'
+    vg_name: "Ansible_VolumeGroup"
+    desired_retention: '24' #Time is in hours
+    cap_unit: "GB"
+
+  tasks:
+    - name: Disassociate protection policy
+      dellemc_powerstore_volumegroup:
+        <<: *connection_vars
+        vg_name: "{{vg_name}}"
+        description: "This volume group is for ansible"
+        state: "present"
+        protection_policy: ""
+
+    - name: Delete protection policy with snapshot rule
+      dellemc_powerstore_protectionpolicy:
+        <<: *connection_vars
+        name: Ansible_policy1
+        description: ansible_policy
+        snapshotrules:
+          - "Ansible_30_minute_rule"
+        snapshotrule_state: "present-in-policy"
+        state: "absent"
+
+    - name: Delete snapshot rule
+      dellemc_powerstore_snapshotrule:
+        <<: *connection_vars
+        name: "{{ 'Ansible_30_minute_rule' }}"
+        days_of_week:
+         - Monday
+         - Wednesday
+         - Friday
+        desired_retention: "{{ desired_retention }}"
+        interval: "Thirty_Minutes"
+        state: "absent"
+
+    - name: Delete volume group 
+      dellemc_powerstore_volumegroup:
+        <<: *connection_vars
+        vg_name: "{{vg_name}}"
+        state: "absent"
+
+    - name: Unmap volume from host {{ host1_name }}  without HLU
+      dellemc_powerstore_volume:
+        <<: *connection_vars
+        vol_name: "{{vol_name +'_' }}{{item}}"
+        state: 'present'
+        mapping_state: 'unmapped'
+        host: "{{ host1_name }}"
+      loop: "{{ range(1, 4 + 1, 1) | list }}"
+
+    - name: Delete host  {{ host1_name }}
+      dellemc_powerstore_host:
+        <<: *connection_vars
+        host_name: "{{ host1_name }}"
+        os_type: 'Linux'
+        initiators: "{{ host1_initiators }}"
+        state: 'absent'
+
+    - name: Delete volume
+      dellemc_powerstore_volume:
+        <<: *connection_vars
+        vol_name: "{{vol_name +'_' }}{{item}}"
+        size: 1
+        cap_unit: "{{cap_unit}}"
+        state: 'absent'
+      loop: "{{ range(1, 4 + 1, 1) | list }}"
+

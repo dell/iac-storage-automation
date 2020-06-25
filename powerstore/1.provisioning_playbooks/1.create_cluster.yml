@@ -1,0 +1,69 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Provision 2 Node Cluster with 4 Volumes of 1 GB each
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+      - vars/connection.yml
+      - vars/credentials.yml
+      - vars/cluster_hosts.yml
+
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    vol_name: 'ansible_'
+    cap_unit: 'GB'
+
+  tasks:
+    - name: Create host  {{ host1_name }}
+      dellemc_powerstore_host:
+        <<: *connection_vars
+        host_name: "{{ host1_name }}"
+        os_type: 'Linux'
+        initiators: "{{ host1_initiators }}"
+        state: 'present'
+        initiator_state: 'present-in-host'
+      
+    - name: Create host  {{ host2_name }}
+      dellemc_powerstore_host:
+        <<: *connection_vars
+        host_name: "{{ host2_name }}"
+        os_type: 'Linux'
+        initiators: "{{ host2_initiators }}"
+        state: 'present'
+        initiator_state: 'present-in-host'
+
+    - name: Create host group with hosts using host name
+      dellemc_powerstore_hostgroup:
+        <<: *connection_vars
+        hostgroup_name: "{{ hostgroup_name }}"
+        hosts:
+          - "{{ host2_name }}" 
+          - "{{ host1_name }}"
+        state: 'present'
+        host_state: 'present-in-group'
+     
+    - name: Create volume
+      dellemc_powerstore_volume:
+        <<: *connection_vars
+        vol_name: "{{vol_name +'_' }}{{item}}" 
+        size: 1
+        cap_unit: "{{cap_unit}}"
+        state: 'present'
+      loop: "{{ range(1, 4 + 1, 1) | list }}"
+
+
+    - name: Map volume to host group without HLU
+      dellemc_powerstore_volume:
+        <<: *connection_vars
+        vol_name: "{{vol_name +'_' }}{{item}}" 
+        state: 'present'
+        mapping_state: 'mapped'
+        hostgroup: "{{ hostgroup_name }}"
+      loop: "{{ range(1, 4 + 1, 1) | list }}"
+
