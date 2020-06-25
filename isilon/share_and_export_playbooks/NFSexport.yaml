@@ -1,0 +1,52 @@
+---
+#############################################################################
+##
+## Name: Isilon NFS Export Example
+## Comment: Please see "example_inventory_file" in repo for host references
+##
+## Author: Evan Koutsandreou
+## Date: 2020/06/22
+#############################################################################
+- name: Create Isilon NFS export and mount to hosts in ansible "export_group"
+  hosts:
+    - isilon822dc1_local ### Specify "ansible_connection=local" in inventory file or host_vars
+    - export_group ### ansible group specified in ansible inventory file
+  vars:
+    input: &isilon_variables
+      onefs_host: '192.168.21.141'
+      verify_ssl: 'False'
+      port_no: '8080'
+      api_user: 'root'
+      api_password: 'root'
+    match_isilon_ansible_host: isilon
+    access_zone: 'System'
+    exportDescr: 'Ansible NFS export'
+    exportState: 'present'
+    nfs_path: '/ifs/data'
+    mount_path: '/mnt/data'
+    export_ip: '192.168.21.141'
+    linux_root_client: '192.168.21.171'
+
+  tasks:
+
+    ### Dell EMC Isilon NFS export module ###
+    - name: Create an Isilon NFS export
+      dellemc_isilon_nfs:
+        <<: *isilon_variables
+        path: "{{ nfs_path }}"
+        sub_directories_mountable: True
+        description: "{{ exportDescr }}"
+        state: "{{ exportState }}"
+        root_clients: "{{ linux_root_client }}"
+        client_state: present-in-export
+      when: match_isilon_ansible_host in inventory_hostname
+
+    ### Ansible native "mount" module ###
+    - name: Mount export to export_group hosts
+      mount:
+        path: "{{ mount_path }}"
+        src: "{{ export_ip }}:{{ nfs_path }}"
+        state: mounted
+        fstype: nfs
+      when: inventory_hostname in groups.export_group
+
