@@ -1,0 +1,36 @@
+---
+#############################################################################
+###
+### Name: Isilon Gather Facts Example
+###  
+### Author: Evan Koutsandreou
+### Date: 2020/06/22
+##############################################################################
+- name: Query isilon array for information
+  hosts: isilon822dc1
+  connection: local ### required if "ansible_connection=local" not defined ###
+  vars:
+    input: &isilon_variables
+      onefs_host: '192.168.21.141'
+      port_no: '8080'
+      verify_ssl: 'False'
+      api_user: 'root'
+      api_password: 'root'
+      access_zone: 'System'
+
+  tasks:
+
+  - name: Get nodes of the Isilon cluster
+    dellemc_isilon_gatherfacts:
+      <<: *isilon_variables
+      gather_subset:
+        - attributes
+        - nodes
+        #- access_zones   ## unhash to list access zone info ##
+        #- providers      ## unhash to list access zone info ##
+        #- users          ## unhash to list access zone info ##
+        #- groups         ## unhash to list access zone info ##
+    register: results
+  
+  - debug:
+      msg="{{ results }}"

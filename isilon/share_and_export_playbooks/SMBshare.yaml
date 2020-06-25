@@ -1,0 +1,68 @@
+---
+#############################################################################
+##
+## Name: Isilon SMB share Example
+## Comment: Please see "example_inventory_file" in repo for host references
+## 
+## Author: Evan Koutsandreou
+## Date: 2020/06/22
+#############################################################################
+- name: Create Isilon SMB Share and mount to hosts in ansible "win_group"
+  hosts:
+    - isilon822dc1_local ### Specify "ansible_connection=local" in inventory file or host_vars
+    - win_group ### ansible group specified in ansible inventory file
+  vars:
+    input: &isilon_variables
+      onefs_host: '192.168.21.141'
+      verify_ssl: 'False'
+      port_no: '8080'
+      api_user: 'root'
+      api_password: 'root'
+    accessZone: 'System'
+    providerType: 'ads'
+    match_isilon_ansible_host: isilon 
+    shareName: 'Data'
+    sharePath: '/ifs/data'
+    shareDescr: 'Ansible SMB share' 
+    shareUser: 'administrator@KRYPTOLULA.LOCAL'
+    shareGroup: 'domain users@KRYPTOLULA.LOCAL'
+    shareAddr: '192.168.21.141'
+    shareState: 'present'
+    shareDrive: 'A'
+
+    #    mount_path: '/mnt/data'
+
+  tasks:
+
+    ### Dell EMC Isilon SMB module ###
+    - name: Create an Isilon SMB share
+      dellemc_isilon_smb:
+        <<: *isilon_variables
+        share_name: "{{ shareName }}"
+        path: "{{ sharePath }}"
+        access_zone: "{{ accessZone }}"
+        description: "{{ shareDescr }}"
+        permissions:
+          - user_name: "{{ shareUser }}"
+            permission: "full"
+            permission_type: "allow"
+            provider_type: "{{ providerType }}"
+          - group_name: "{{ shareGroup }}"
+            permission: "full"
+            permission_type: "allow"
+            provider_type: "{{ providerType }}"
+          - wellknown: "everyone"
+            permission: "read"
+            permission_type: "allow"
+        state: "{{ shareState }}"
+      when: match_isilon_ansible_host in inventory_hostname
+
+    ### Ansible native windows "map network drive" module ###
+    - name: Test mapping network drive to windows hosts
+      win_mapped_drive:
+          letter: "{{ shareDrive }}"
+          path: "\\\\{{ shareAddr }}\\Data"
+          state: "{{ shareState }}"
+          username: "{{ ansible_user }}"
+          password: "{{ ansible_password }}"
+      when: inventory_hostname in groups.win_group
