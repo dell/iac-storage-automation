@@ -4,7 +4,7 @@ This repository contains Ansible automation code samples for storage platforms p
 Inside each of the platform directories the examples will be categorized by the major use case implemented.  This can include such categories as host provisioning, local/remote replication, portal integration, and end-to-end process integration.
 
 **[PowerMax](powermax)**  
-**[Isilon](isilon)**  
+**[Isilon](isilon)**
 **[PowerStore](powerstore)**
 
 
