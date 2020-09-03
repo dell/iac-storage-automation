@@ -1,0 +1,193 @@
+---
+- name: Get userbase from Active Directory
+  hosts: win
+  tags:
+  - active_directory
+  - cleanup
+  - fs_creation
+  - snapshotschedule_creation
+  tasks:
+    - name: Check Domain Controller connectivity
+      win_ping:
+
+    - name: Get Students
+      win_domain_group_membership:
+        name: students
+        members:
+      register: members_students_group
+    - name: Get Teachers
+      win_domain_group_membership:
+        name: teachers
+        members:
+      register: members_teachers_group
+
+    - set_fact:
+        students_list: "{{members_students_group.members | list}}"
+        teachers_list: "{{members_teachers_group.members | list}}"
+
+
+- name: Create Unix home directory from AD user base in PowerScale/Isilon
+  hosts: localhost
+  tags: create_in_isilon
+  connection: local
+  vars:
+    base_path: "/ifs/university"
+    verify_ssl: false
+    access_control: "0755"
+    domain: "devconad.com"
+    input: &isi_connection_vars
+      onefs_host: "{{onefs_host}}"
+      port_no: "{{port_no}}"
+      verify_ssl: "{{verify_ssl}}"
+      api_user: "{{username}}"
+      api_password: "{{password}}"
+      access_zone: "{{access_zone}}"
+  vars_files:
+    - credentials-isi.yml
+
+  tasks:
+    - name: Create Filesystem with Quota for students
+      dellemc_isilon_filesystem:
+        <<: *isi_connection_vars
+        path: "{{base_path}}/students/{{item}}"
+        owner:
+          # name: "{{item}}@{{domain}}"
+          name: "root"
+          provider_type: 'file'
+        access_control: "{{access_control}}"
+        quota:
+          include_snap_data: False
+          include_data_protection_overhead: False
+          advisory_limit_size: 2
+          soft_limit_size: 5
+          hard_limit_size: 10
+          cap_unit: 'GB'
+          quota_state: 'present'
+        recursive: True
+        state: 'present'
+      loop: "{{ hostvars['devconad.com']['students_list'] }}"
+      tags: fs_creation
+    - name: Create Filesystem with Quota for Teachers
+      dellemc_isilon_filesystem:
+        <<: *isi_connection_vars
+        path: "{{base_path}}/teachers/{{item}}"
+        owner:
+          name: "root"
+          provider_type: 'file'
+        access_control: "{{access_control}}"
+        quota:
+          hard_limit_size: 100
+          cap_unit: 'GB'
+          quota_state: 'present'
+        recursive: True
+        state: 'present'
+      loop: "{{ hostvars['devconad.com']['teachers_list'] }}"
+      tags: fs_creation
+
+    - name: Create snapshot schedule for students
+      dellemc_isilon_snapshotschedule:
+        <<: *isi_connection_vars
+        name: "Ansible demo Students home directories backup final"
+        path: '{{base_path}}/students'
+        desired_retention: "3"
+        retention_unit: "days"
+        pattern: "Ansible_Students_homedir_%Y-%m-%d_%H:%M"
+        schedule: "every 1 days at 12:00 PM"
+        state: 'present'
+      tags: snapshotschedule_creation
+    - name: Create snapshot schedule for teachers
+      dellemc_isilon_snapshotschedule:
+        <<: *isi_connection_vars
+        name: "Ansible demo Teachers home directories backup final"
+        path: '{{base_path}}/teachers'
+        desired_retention: "30"
+        retention_unit: "days"
+        pattern: "Ansible_Teachers_homedir_%Y-%m-%d_%H:%M"
+        schedule: "every 1 days at 1:00 PM"
+        state: 'present'
+      tags: snapshotschedule_creation
+    
+    - name: Create NFS Export for homedir
+      dellemc_isilon_nfs:
+        <<: *isi_connection_vars
+        path: "{{base_path}}"
+        sub_directories_mountable: True
+        client_state: present-in-export
+        root_clients: "{{ groups['unixes'] }}"
+        state: 'present'
+      tags: export_creation
+
+- name: Mount home directories on the servers
+  hosts: unixes
+  tags: unix
+  vars:
+    # TODO use global vars
+    base_path: /ifs/university
+    nfs_server_ip: ''
+  tasks:
+    - name: Create mount point /mnt/nfs_students
+      file:
+        path: /mnt/nfs_students
+        state: directory
+        mode: '0755'
+    - name: Create mount point /mnt/nfs_teachers
+      file:
+        path: /mnt/nfs_teachers
+        state: directory
+        mode: '0755'
+
+    - name: Update /etc/fstab for students share
+      lineinfile:
+        path: /etc/fstab
+        regexp: "^{{nfs_server_ip}}:{{base_path}}/students"
+        line: "{{nfs_server_ip}}:{{base_path}}/students /mnt/nfs_students nfs defaults 0 0"
+    - name: Update /etc/fstab for teachers share
+      lineinfile:
+        path: /etc/fstab
+        regexp: "^{{nfs_server_ip}}:{{base_path}}/teachers"
+        line: "{{nfs_server_ip}}:{{base_path}}/teachers /mnt/nfs_teachers nfs defaults 0 0"
+    # use unionfs-fuse over overlayfs (not compatible with NFS and cannot write on lower dir), AUFS (because it is not compiled with Centos 7), mergerfs
+    - name: Update /etc/fstab to mount /home with both share share
+      lineinfile:
+        path: /etc/fstab
+        regexp: "^unionfs#/mnt/nfs_students"
+        line: "unionfs#/mnt/nfs_students=RW:/mnt/nfs_teachers=RW /home/ fuse cow 0 0"
+
+    # TODO improve use mount
+    - name: Mount everything
+      command: mount -a
+
+    - name: Capture files in path and register
+      shell: >
+        ls -1 /mnt/nfs_students
+      register: students_home_dir
+      run_once: True
+      tags: cleanup
+
+    - set_fact:
+        orphan_home_dirs: "{{students_home_dir.stdout_lines | list | difference(hostvars['devconad.com']['students_list'])}}"
+      tags: cleanup
+
+- name: Remove file systems for missing students Unix home directory from AD user base in PowerScale/Isilon
+  hosts: localhost
+  connection: local
+  vars:
+    base_path: "/ifs/university"
+    verify_ssl: false
+  vars_files:
+  - credentials-isi.yml
+  tags: cleanup
+  tasks:
+    - name: Remove Filesystem and Quota for missing students from AD
+      dellemc_isilon_filesystem:
+        onefs_host: "{{onefs_host}}"
+        port_no: "{{port_no}}"
+        verify_ssl: "{{verify_ssl}}"
+        api_user: "{{username}}"
+        api_password: "{{password}}"
+        access_zone: "{{access_zone}}"
+        path: "{{base_path}}/students/{{item}}"
+        quota:
+          quota_state: absent
+        state: absent
+      loop: "{{hostvars[groups['unixes']|first]['orphan_home_dirs'] | list}}"
