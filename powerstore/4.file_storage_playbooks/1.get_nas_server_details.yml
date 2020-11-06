@@ -1,0 +1,30 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Get Details of Nas Server
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+      - vars/connection.yml
+      - vars/credentials.yml
+
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    vol_name: 'ansible_'
+    cap_unit: 'GB'
+    nas_server_name: 'nasservername'
+
+  tasks:
+    - name: Get details of NAS Server by name
+      dellemc_powerstore_nasserver:
+       <<: *connection_vars
+       nas_server_name: "{{ nas_server_name }}"
+       description: "NAS Server for use by Ansible"
+       state: "present"
+      register: result
+    - debug: var=result

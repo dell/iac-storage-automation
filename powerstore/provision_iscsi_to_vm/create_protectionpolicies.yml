@@ -20,10 +20,13 @@
         state: "present"
       register: protectionpolicy
       loop: "{{ protection_policies }}"
+      loop_control: 
+        label: "{{ item.protpolicy_name }}"
 
-    - debug:
-        var: protectionpolicy
-      tags: debug
+    # - debug:
+    #     var: protectionpolicy
+    #   tags: debug
+
 
     - name: Get details of protection policy by name
       dellemc_powerstore_protectionpolicy:
@@ -35,6 +38,8 @@
         state: "present"
       register: protectionpolicy
       loop: "{{ protection_policies }}"
+      loop_control: 
+        label: "{{ item.protpolicy_name }}"
 
     - debug:
         var: protectionpolicy

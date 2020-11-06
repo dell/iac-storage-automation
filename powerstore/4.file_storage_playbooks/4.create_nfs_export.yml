@@ -1,0 +1,49 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Exend Filesystem Capacity
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/connection.yml
+    - vars/credentials.yml
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    filesystem_name: "Ansible_FS"
+    nas_server_id: "nasserverid"
+    description: "FileSystem Created by Ansible"
+    protection_policy_id: "daily"
+    export_name1: "Ansible_FS"
+    path1: "/Ansible_FS"
+
+
+  tasks:
+    - name: Create NFS export (filesystem)
+      dellemc_powerstore_nfs:
+        <<: *connection_vars
+        nfs_export_name: "{{export_name1}}"
+        filesystem: "{{filesystem_name}}"
+        nas_server: "{{nas_server_id}}"
+        path: "{{path1}}"
+        description: "This NFS filesystem was brought to you by Ansible"
+        default_access: "NO_ACCESS"
+        no_access_hosts: #All access Parameters are Optional
+          - "host5"
+        read_only_hosts:
+          - "host1"
+        read_only_root_hosts:
+          - "host2"
+        read_write_hosts:
+          - "host3"
+        read_write_root_hosts:
+          - "host4"
+        min_security: "SYS"
+        anonymous_uid: 1000
+        anonymous_gid: 1000
+        is_no_suid: True
+        host_state: "present-in-export"
+        state: "present"

@@ -1,16 +1,10 @@
 # Ansible Automation Examples for Dell EMC Storage Platforms
 This repository contains Ansible automation code samples for storage platforms provided by TME, SA, and other Dell EMC internal teams.  The examples highlight the capabilities of the modules and their ability to be integrated into more complex playbooks, workflows, and applications.
 
-Inside each of the platform directories the examples will be categorized by the major use case implemented.  This can include such categories as host provisioning, local/remote replication, portal integration, and end-to-end process integration.
 
-**[PowerMax](powermax)**  
-**[Isilon/PowerScale](powerscale)**  
-**[PowerStore](powerstore)**
-**[VPLEX](vplex)**
+This folder contains examples for configuring a VPLEX system.  
+There are basic playbooks which show the currently configured resources via the gather facts module.  There are also more advanced examples of using playbooks with roles in conjunction with the PowerMax or PowerStore modules to create a backend storage volume and a virtual volume from it.
 
-
-## Documentation
-Each example contains a readme file with instructions on prerequisites, installation, and usage.  Be sure to also review supported resource versions and follow installation instructions for the underlying modules used in the examples per their documentation.
 
 ## Support
 The examples are provided as is with no warranties.  Some basic knowledge of the Red Hat Ansible Automation Platform and additional technology integration is expected.  Please enter an [issue](https://github.com/dell/ansible-storage-automation/issues) if you would like to report a defect.

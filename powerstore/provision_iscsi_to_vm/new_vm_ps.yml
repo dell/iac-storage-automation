@@ -50,9 +50,9 @@
       register: newvms
       tags: newvms
 
-    - debug:
-        var: newvms
-      tags: debug
+    # - debug:
+    #     var: newvms
+    #   tags: debug
 
     - pause:
         seconds: 60

@@ -1,0 +1,33 @@
+#!/usr/bin/env ansible-playbook
+- name: Gather all facts on a VPLEX cluster
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vplex_vars/connection.yml
+    - vplex_vars/credentials.yml
+  vars:
+    input: &conn_vars
+      vplexhost: "{{ vplexhost }}"
+      vplexuser: "{{ vplexuser }}"
+      vplexpassword: "{{vplexpassword }}"
+      verifycert: "{{ verifycert }}"
+      cluster_name: "{{ cluster_name }}"
+  
+  tasks:
+
+    - name: Gather all volumes
+      dellemc_vplex_gatherfacts:
+        <<: *conn_vars
+        gather_subset:
+         - virt_vol
+      register: virtualvolumes
+    - debug:  var=virtualvolumes
+
+    - name: Gather volume details
+      dellemc_vplex_virtual_volume:
+        <<: *conn_vars
+        virtual_volume_name: "{{item}}"
+        state: "present"
+      register: allvoldetails
+      loop: "{{virtualvolumes.VirtualVolumes}}"
+    - debug:  var=allvoldetails

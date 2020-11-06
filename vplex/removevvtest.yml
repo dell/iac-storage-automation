@@ -1,0 +1,12 @@
+#!/usr/bin/env ansible-playbook
+- name: Remove a virtual volume
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Remove a VPLEX virtual volume
+      include_role:
+        name: removevirtualvol
+      vars:
+        virtual_volume_name: "dev_bryantest_1_vol"

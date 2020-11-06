@@ -1,0 +1,9 @@
+init_1_name: 'ansbile-init1'
+init_1_wwn: '0x1122334455667788'
+init_2_name: 'ansible-init2'
+init_2_wwn: '0x1122334455667789'
+
+feports: ['P000000004760450A-A0-FC00','P0000000047604691-A0-FC00',
+          'P000000004770450A-B0-FC00','P0000000047704691-B0-FC00']
+
+storageview_name: 'ansible-storview'

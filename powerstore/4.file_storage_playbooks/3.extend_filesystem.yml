@@ -1,0 +1,42 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Exend Filesystem Capacity
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars/connection.yml
+    - vars/credentials.yml
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    filesystem_name: "Ansible_FS"
+    nas_server_id: "naserverid"
+    description: "FileSystem Created by Ansible"
+    protection_policy_id: "daily"
+
+  tasks:
+    - name: Increase FileSystem Capacity to 10 GB
+      register: result_fs
+      dellemc_powerstore_filesystem:
+        <<: *connection_vars
+        filesystem_name: "{{filesystem_name}}"
+        description: "{{description}}"
+        nas_server: "{{nas_server_id}}"
+        size: "10"
+        cap_unit: "GB"
+        access_policy: "UNIX"
+        locking_policy: "MANDATORY"
+        smb_properties:
+          is_smb_no_notify_enabled: True
+          is_smb_notify_on_access_enabled: True
+        quota_defaults:
+          # Limits the amount of storage consumed by an individual user storing data on the file system.
+          grace_period: 1
+          grace_period_unit: 'days'
+          default_hard_limit: 3
+          default_soft_limit: 2
+        protection_policy: "{{protection_policy_id}}"
+        state: "present"

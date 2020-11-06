@@ -1,0 +1,51 @@
+- name: "Setup variables for use in tasks" 
+  set_fact:
+    input: &conn_vars
+      vplexhost: "{{ vplexhost }}"
+      vplexuser: "{{ vplexuser }}"
+      vplexpassword: "{{vplexpassword }}"
+      verifycert: "{{ verifycert }}"
+      cluster_name: "{{ cluster_name }}"
+
+- name: Get device name
+  set_fact:
+    device_name: "{{ virtual_volume_name|regex_replace('_vol','')}}"
+- name: Print device name
+  debug:  var=device_name
+
+- name: Get extent name
+  set_fact:
+    extent_name: "extent_{{ device_name|regex_replace('dev_','')}}"
+- name: Print extent name
+  debug:  var=extent_name
+
+- name: Get storage volume name
+  set_fact:
+    storage_volume_name: "{{ device_name|regex_replace('dev_','')|regex_replace('_1','')}}"
+- name: Print storage volume name
+  debug:  var=storage_volume_name
+
+- name: Delete virtual volume
+  dellemc_vplex_virtual_volume:
+      <<: *conn_vars
+      virtual_volume_name: "{{ virtual_volume_name }}"
+      state: "absent"
+
+- name: Delete device
+  dellemc_vplex_device:
+    <<: *conn_vars
+    device_name: "{{device_name}}"
+    state: "absent"
+
+- name: Delete extent 
+  dellemc_vplex_extent:
+    <<: *conn_vars
+    extent_name: "{{extent_name}}"
+    state: "absent"
+
+- name: Unclaim storage volume 
+  dellemc_vplex_storage_volume:
+    <<: *conn_vars
+    storage_volume_name: "{{storage_volume_name}}"
+    claimed_state: unclaimed
+    state: present

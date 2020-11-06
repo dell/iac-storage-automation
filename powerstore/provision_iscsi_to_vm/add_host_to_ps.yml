@@ -1,31 +1,57 @@
 ---
 - name: Add hosts to PowerStore
   hosts: all
-  gather_facts: false
+  gather_facts: true
   vars_files:
     - ps_vars.yml
   vars:
   tasks:
-  #Query the host's iqn
+  #Query the host's iSCSI iqn and FC WWNs
   - name: Gather facts for host
     setup:
-      filter: ansible_iscsi_iqn
+      filter: 
+        - ansible_iscsi_iqn
+        - ansible_fibre_channel_wwn
 
   - name: iSCSI iqn on hosts
     debug:
-      msg: "The iqn for {{ inventory_hostname }} is {{ ansible_iscsi_iqn }}."
+      msg: 
+        - "The iqn for {{ inventory_hostname }} is {{ ansible_iscsi_iqn }}."
+        - "The FC WWNs for {{ inventory_hostname }} is {{ ansible_fibre_channel_wwn | map('regex_replace', '^(..)(..)(..)(..)(..)(..)(..)(..)$', '\\1:\\2:\\3:\\4:\\5:\\6:\\7:\\8')|list}}"
 
-  - name: Add host to PowerStore
+  - name: Add iscsi host to PowerStore
     dellemc_powerstore_host:
       array_ip: "{{ array_ip }}"
       verifycert: "{{ verifycert }}"
       user: "{{ user }}"
       password: "{{ password }}"
-      host_name: "{{ inventory_hostname }}"
+      host_name: "{{ inventory_hostname }}-iscsi"
       os_type: "{{ os_type }}"
       initiators: "{{ ansible_iscsi_iqn }}"
       state: present
       initiator_state: present-in-host
+    when: 
+      - ansible_iscsi_iqn is defined
+      - ansible_iscsi_iqn |trim != ''
+    register: createhost_result
+    delegate_to: localhost
+    tags: 
+      - add_hosts
+
+  - name: Add FC host to PowerStore
+    dellemc_powerstore_host:
+      array_ip: "{{ array_ip }}"
+      verifycert: "{{ verifycert }}"
+      user: "{{ user }}"
+      password: "{{ password }}"
+      host_name: "{{ inventory_hostname }}-fc"
+      os_type: "{{ os_type }}"
+      initiators: "{{ ansible_fibre_channel_wwn | map('regex_replace', '^(..)(..)(..)(..)(..)(..)(..)(..)$', '\\1:\\2:\\3:\\4:\\5:\\6:\\7:\\8')|list }}"
+      state: present
+      initiator_state: present-in-host
+    when: 
+      - ansible_fibre_channel_wwn is defined
+      - ansible_fibre_channel_wwn |trim != ''
     register: createhost_result
     delegate_to: localhost
     tags: 

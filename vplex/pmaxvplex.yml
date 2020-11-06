@@ -1,0 +1,40 @@
+#!/usr/bin/env ansible-playbook
+- name: Create a PowerMax volume and a VPLEX virtual volume from it
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - powermax_vars/connection.yml
+    - powermax_vars/credentials.yml
+
+  vars:
+    U4Vinput: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+    powermax_vplex_sg: "vplex_storagegroup"
+    vol_name: "volumevplex"
+
+  tasks:
+    - name: Create new volume and add to VPLEX storage group
+      dellemc_powermax_volume:
+        <<: *uni_connection_vars
+        vol_name: "{{vol_name}}"
+        sg_name: "{{powermax_vplex_sg}}"
+        size: 10
+        cap_unit: "GB"
+        state: 'present'
+      register: pmaxvoldetails
+    - debug: var=pmaxvoldetails
+
+    - name: Create new VPLEX virtual volume
+      include_role:
+        name: createvirtualvol
+      vars:
+        storage_volume_id: "VPD83T3:{{pmaxvoldetails.volume_details.wwn}}"
+        new_storage_volume_name: "volumetest"
+    - name: Print virtual volume details
+      debug:  var=vplexvirtvol

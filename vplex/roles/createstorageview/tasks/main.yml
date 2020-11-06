@@ -1,0 +1,36 @@
+- set_fact:
+    input: &conn_vars
+      vplexhost: "{{ vplexhost }}"
+      vplexuser: "{{ vplexuser }}"
+      vplexpassword: "{{vplexpassword }}"
+      verifycert: "{{ verifycert }}"
+      cluster_name: "{{ cluster_name }}"
+      
+- name: Register Initiator {{ init_1_name }} with port_wwn "{{ init_1_wwn}}"
+  dellemc_vplex_initiator:
+    <<: *conn_vars
+    initiator_name: "{{ init_1_name }}"
+    port_wwn: "{{ init_1_wwn}}"
+    registered: true
+    state: "present"
+- name: Register Initiator {{ init_2_name }} with port_wwn "{{ init_2_wwn}}"
+  dellemc_vplex_initiator:
+    <<: *conn_vars
+    initiator_name: "{{ init_2_name }}"
+    port_wwn: "{{ init_2_wwn}}"
+    registered: true
+    state: "present"
+
+- name: Create a storage view and add initiators
+  dellemc_vplex_storage_view:
+    <<: *conn_vars
+    storage_view_name: "{{storageview_name}}"
+    ports: "{{feports}}"
+    initiators : ["{{ init_1_name }}", "{{ init_2_name }}"]
+    initiator_state: "present-in-view"
+    virtual_volumes: ["{{virtual_volume}}"]
+    virtual_volume_state: "present-in-view"
+    state: "present"
+  register: storage_view
+
+- debug:  var=storage_view

@@ -6,7 +6,7 @@
       - iscsi-initiator-utils
     state: latest
   become: true
-  when: ansible_facts.distribution == 'RedHat' and ansible_facts.distribution_major_version > '5'
+  when: ansible_facts.distribution == 'RedHat'
 
 
 - name: Install required packages

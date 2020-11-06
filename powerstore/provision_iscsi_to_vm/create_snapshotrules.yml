@@ -22,11 +22,13 @@
         state: "present"
       register: snaprule_result
       loop: "{{ snapshot_rules }}"
+      loop_control: 
+        label: "{{ item.rulename }}"
       when: item.snapint is defined
 
-    - debug:
-        var: snaprule_result
-      tags: debug
+    # - debug:
+    #     var: snaprule_result
+    #   tags: debug
 
     - name: Create snapshot rule by date time
       dellemc_powerstore_snapshotrule:
@@ -41,10 +43,13 @@
         state: "present"
       register: snaprule_result
       loop: "{{ snapshot_rules }}"
+      loop_control: 
+        label: "{{ item.rulename }}"
+      when: item.snapint is not defined
 
-    - debug:
-         var: snaprule_result
-      tags: debug
+    # - debug:
+    #      var: snaprule_result
+    #   tags: debug
 
     - name: Get details of existing snapshot rule by name
       dellemc_powerstore_snapshotrule:
@@ -56,8 +61,14 @@
         state: "present"
       register: snaprule_result
       loop: "{{ snapshot_rules }}"
+      loop_control: 
+        label: "{{ item.rulename }}"
 
     - debug:
         var: snaprule_result
       tags: debug
+
+    # - pause:
+    #     seconds: 15
+    #   tags: debug
 
