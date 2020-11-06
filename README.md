@@ -5,7 +5,7 @@ Inside each of the platform directories the examples will be categorized by the 
 
 **[PowerMax](powermax)**  
 **[Isilon/PowerScale](powerscale)**  
-**[PowerStore](powerstore)**
+**[PowerStore](powerstore)**  
 **[VPLEX](vplex)**
 
 
