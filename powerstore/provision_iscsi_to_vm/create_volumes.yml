@@ -1,6 +1,7 @@
 ---
 - name: Create volumes on PowerStore and map volumes to host
   hosts: all 
+  gather_facts: false
   vars_files:
     - ps_vars.yml
   vars:
@@ -20,7 +21,10 @@
         performance_policy: "{{ item.volperfpol }}"
       register: result_vol    
       loop: "{{ volumes }}"
+      loop_control:
+        label: "{{ item.volname }} {{ item.volsize }}{{ item.volcapunit }}"
       delegate_to: localhost
+      when: volumes is defined
 
     - name: Map volumes to hosts using host name
       dellemc_powerstore_volume:
@@ -29,8 +33,10 @@
         user: "{{ user }}"
         password: "{{ password }}"
         vol_name: "{{ item.volname }}"
-        host: "{{ inventory_hostname }}"
+        host: "{{ inventory_hostname }}-{{ item.storage_protocol }}"
         mapping_state: mapped
         state: present
-      loop: "{{ volumes }}"
+      loop: "{{ map_volumes }}"
+      loop_control:
+        label: "{{ item.volname }} {{ item.storage_protocol }}"
       delegate_to: localhost

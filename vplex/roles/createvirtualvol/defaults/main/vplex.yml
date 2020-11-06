@@ -1,0 +1,3 @@
+storage_volume_id: "please specify storage volume"
+new_storage_volume_name: "sv_{{storage_volume_id |hash('md5')}}"
+cluster_name: 'cluster-1'

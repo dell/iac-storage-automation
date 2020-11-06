@@ -16,81 +16,107 @@
         state: "present"
       register: volume_results
       loop: "{{ volumes }}"
+      loop_control:
+        label: "{{ item.volname }}"
       delegate_to: localhost
 
-    - debug:
-        var: volume_results.results
-      tags: debug
+    # - debug:
 
-    - name: Parse out volume information from volume_results.results
-      debug:
-        msg: 
-          - "Volume is {{ item.0.item.volname }}"
-          - "WWN is {{ item.0.volume_details.wwn | regex_replace('naa.') }}"
-          - "LUN is {{ item.1.logical_unit_number }}"
-      with_subelements:
-        - "{{ volume_results.results }}"
-        - volume_details.hlu_details 
-      tags: debug 
+    #     var: volume_results.results
+    #   tags: debug
+
+    # - name: Parse out volume information from volume_results.results
+    #   debug:
+    #     msg: 
+    #       - "Volume is {{ item.0.item.volname }}"
+    #       - "WWN is {{ item.0.volume_details.wwn | regex_replace('naa.') }}"
+    #       - "LUN is {{ item.1.logical_unit_number }}"
+    #   with_subelements:
+    #     - "{{ volume_results.results }}"
+    #     # The subelement needs to be the relative location from volume_results.results
+    #     - volume_details.hlu_details 
+    #   tags: debug 
 
     - name: Set fact for volume wwns
       set_fact:
-        device_wwns: "{{ device_wwns|default({}) | combine( {item.0.item.volname: item.0.volume_details.wwn | regex_replace('naa.')} ) }}"
+        device_wwns: "{{ device_wwns|default({}) | combine( {item.0.item.volname: item.0.volume_details.wwn | regex_replace('naa.', '3')} ) }}"
       with_subelements:
         - "{{ volume_results.results }}"
-        - volume_details.hlu_details  
+        # The subelement needs to be the relative location from volume_results.results
+        - volume_details.hlu_details
+      loop_control:
+        label: "item.0.item.volname"
     
-    - debug:
-        msg:
-          - "Here are the devices' WWNs:" 
-          - "{{ device_wwns }}"
-          - "{{ device_wwns.keys() }}"
-      tags: debug
+    # - debug:
+    #     msg:
+    #       - "Here are the devices' WWNs:" 
+    #       - "{{ device_wwns }}"
+    #       - "{{ device_wwns.keys() }}"
+    #   tags: debug
 
-    - debug:
-        msg: 
-          - "Looking up the fs based on fs"
-          - "Found {{ item.volname }}"
-          - "The mount path is {{ item.mount_path }}"
-          - "The WWN is {{ device_wwns[item.volname] }}"
-      loop: "{{ fs }}"
-      tags: debug
-  
+    # - debug:
+    #     msg: 
+    #       - "Looking up the fs based on fs"
+    #       - "Found {{ item.volname }}"
+    #       - "The mount path is {{ item.mount_path }}"
+    #       - "The WWN is {{ device_wwns[item.volname] }}"
+    #   loop: "{{ volumes }}"
+    #   loop_control:
+    #     label: "item.volname"
+    #   tags: debug
+
+    - name: Update multipath.conf
+      lineinfile:
+        path: /etc/multipath.conf
+        regexp: 'user_friendly_names'
+        line: ' user_friendly_names yes'
+
+    - name: Restart multipathd
+      service:
+        name: multipathd
+        state: restarted
+        enabled: yes
+
     - name: Scan scsi bus on host
       shell: /usr/bin/rescan-scsi-bus.sh
       register: result
 
-    - debug:
-        var: result
-      tags: debug
-
-    - name: Detect the multipath device id based on WWNs
+    # We assume the the multipath user_friendly_names is set to yes
+    - name: Detect the multipath devices based on WWNs
       shell: 'multipath -l | sed -ne "s/\([^ ]*\).*{{ device_wwns[item.volname] }}.*/\1/p"'
-      loop: "{{ fs }}" 
+      loop: "{{ volumes }}" 
+      loop_control:
+        label: "{{ item.volname }}"
       register: multipath_id
 
-    - debug:
-        var: multipath_id.results
-      tags: debug
+    # - debug:
+    #     var: multipath_id.results
+    #   tags: debug
 
-    - name: Set facts for multipath id and filesystem
+
+    - name: Set facts for volume multipath devices
       set_fact:
-        fs_mpath: "{{ fs_mpath|default([]) + [ {'mount_path': item.item.mount_path, 'volname': item.item.volname, 'fstype': item.item.fstype, 'mpath': item.stdout} ] }}"
-      loop: "{{ multipath_id.results }}"   
+        device_mpaths: "{{ device_mpaths|default({}) | combine( {item.item.volname: item.stdout} ) }}"
+      loop: "{{ multipath_id.results }}"
+      loop_control:
+        label: "{{ item.item.volname }} {{ item.stdout }}"
 
-    - debug:
-        var: fs_mpath
-      tags: debug
+    # - debug:
+    #     var: device_mpaths
+    #   tags: debug
 
     - name: Create file system on volume
       filesystem:
         fstype: "{{ item.fstype }}"
-        dev: "/dev/mapper/{{ item.mpath }}"
+        dev: "/dev/mapper/{{ device_mpaths[item.volname] }}"
         opts: -fK
       when: 
-      - item.mpath is defined
-      - item.mpath|trim != '' 
-      loop: "{{ fs_mpath }}"
+      - item.mount_path is defined
+      - item.mount_path|trim != ''
+      - device_mpaths[item.volname] | trim != ''
+      loop: "{{ volumes }}"
+      loop_control:
+        label: "{{ item.volname}} {{ device_mpaths[item.volname] }} {{ device_wwns[item.volname] }} {{ item.mount_path }} {{ item.fstype }}"
 
     - name: Ensure the base dir for the mount point exists 
       file:
@@ -99,17 +125,58 @@
       when: 
       - item.mount_path is defined
       - item.mount_path|trim != ''
-      loop: "{{ fs_mpath }}"
+      loop: "{{ volumes }}"
+      loop_control:
+        label: "{{ item.mount_path }}"
 
     - name: Mount the file system
       mount:
-        src: "/dev/mapper/{{ item.mpath }}"
+        src: "/dev/mapper/{{ device_mpaths[item.volname] }}"
         path: "{{ item.mount_path }}"
-        opts: _netdev
+        opts: "{{ item.mount_opts }}"
         fstype: "{{ item.fstype }}" 
         state: mounted
       when: 
       - item.mount_path is defined
       - item.mount_path|trim != ''
-      loop: "{{ fs_mpath }}"
+      - device_mpaths[item.volname] | trim != ''
+      loop: "{{ volumes }}"
+      loop_control:
+        label: "{{ item.mount_path }} on {{ device_mpaths[item.volname] }}"
 
+    - name: Get UUID of the file system
+      shell: blkid "/dev/mapper/{{ device_mpaths[item.volname] }}" | awk '{print $2}'
+      loop: "{{ volumes }}"
+      loop_control:
+        label: "{{ item.mount_path }}"
+      when:
+      - item.mount_path is defined
+      - item.mount_path|trim != ''
+      - device_mpaths[item.volname] | trim != ''
+      register: uuid
+
+    # - debug:
+    #     var: uuid
+    #   tags: debug
+
+    - name: Set facts for file system uuuids
+      set_fact:
+        fs_uuids: "{{ fs_uuids|default({}) | combine( {item.item.volname: item.stdout} ) }}"
+      loop: "{{ uuid.results }}"
+      loop_control:
+        label: "{{ item.item.volname }}"
+      when: item.changed
+
+    - name: Replace fstab entry with UUID
+      replace:
+        path: /etc/fstab
+        regexp: '^.*{{ device_mpaths[item.volname] }}(.*)$'
+        replace: '{{ fs_uuids[item.volname] }}\1'
+      loop: "{{ volumes }}"
+      loop_control:
+        label: "{{ item.mount_path }}"
+      when:
+      - item.mount_path is defined
+      - item.mount_path|trim != ''
+      - device_mpaths[item.volname] | trim != ''
+      - fs_uuids[item.volname] | trim != ''      

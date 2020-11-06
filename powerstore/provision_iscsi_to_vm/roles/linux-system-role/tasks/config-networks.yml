@@ -1,0 +1,15 @@
+- name: Configure networks
+  nmcli:
+    conn_name: '{{ item.conn_name }}'
+    ifname: '{{ item.ifname }}'
+    type: '{{ item.type }}'
+    ip4: '{{ item.ip4 }}'
+    autoconnect: yes
+    state: '{{ item.state }}'
+    #state: absent
+  loop: '{{ network_interfaces }}'
+  when: item.ip4 is defined
+
+
+
+

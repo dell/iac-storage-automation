@@ -1,0 +1,76 @@
+- set_fact:
+    input: &conn_vars
+      vplexhost: "{{ vplexhost }}"
+      vplexuser: "{{ vplexuser }}"
+      vplexpassword: "{{vplexpassword }}"
+      verifycert: "{{ verifycert }}"
+      cluster_name: "{{ cluster_name }}"
+
+- name: Gather storage arrays
+  dellemc_vplex_gatherfacts:
+    <<: *conn_vars
+    gather_subset:
+      - stor_array
+  register: arrays
+- debug:  var=arrays
+
+- name: Rediscover all existing arrays
+  dellemc_vplex_array:
+    <<: *conn_vars
+    array_name: "{{ item }}"
+  loop: "{{ arrays.StorageArrays }}"
+
+- name: Get storage volume details
+  dellemc_vplex_storage_volume:
+    <<: *conn_vars
+    storage_volume_id: "{{storage_volume_id}}"
+    state: present
+  register: storvol
+# - name: Print storage volume usage
+#   debug:  var=storvol.storage_details.use
+
+- name: Claim storage volume 
+  dellemc_vplex_storage_volume:
+    <<: *conn_vars
+    storage_volume_id: "{{storage_volume_id}}"
+    new_storage_volume_name: "{{new_storage_volume_name}}"
+    claimed_state: claimed
+    state: present
+  register: storvol
+# - name: Print storage volume usage
+#   debug:  
+#     msg:
+#       - "Storage volume ID: {{ storvol.storage_details.system_id }}"
+#       - "Storage volume name: {{ storvol.storage_details.name }}"
+#       - "Storage volume claim: {{ storvol.storage_details.use }}"
+  
+- name: Create extent from new storage volume
+  dellemc_vplex_extent:
+    <<: *conn_vars
+    storage_volume_id: "{{storage_volume_id}}"
+    state: "present"
+  register: extent
+# - name: Print extent details
+#   debug:  var=extent
+
+- name: Create device from new extent
+  dellemc_vplex_device:
+    <<: *conn_vars
+    geometry: "raid-0"
+    stripe_depth: "4KB"
+    device_name: "dev_{{new_storage_volume_name}}_1"
+    extents: ["extent_{{new_storage_volume_name}}_1"]
+    extent_state: "present-in-device"
+    state: "present"
+  register: device
+# - name: Print device details
+#   debug:  var=device
+
+- name: Create volume from new device
+  dellemc_vplex_virtual_volume:
+    <<: *conn_vars
+    supporting_device_name: "dev_{{new_storage_volume_name}}_1"
+    state: "present"
+  register: vplexvirtvol
+# - name: Print virtual volume details
+#   debug:  var=virtvol

@@ -1,0 +1,68 @@
+#!/usr/bin/env ansible-playbook
+---
+- name: Exend Filesystem Capacity
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/connection.yml
+    - vars/credentials.yml
+  vars:
+    input: &connection_vars
+      password: "{{ password }}"
+      array_ip: "{{ array_ip_1 }}"
+      user: "{{  user  }}"
+      verifycert: false
+    filesystem_name: "Ansible_FS"
+    nas_server_id: "nasserverid"
+    description: "FileSystem Created by Ansible"
+    protection_policy_id: "daily"
+    export_name1: "Ansible_FS"
+    path1: "/Ansible_FS"
+
+  tasks:
+    - name: Get FS Details
+      register: fs_details
+      dellemc_powerstore_filesystem:
+        <<: *connection_vars
+        filesystem_name: "{{filesystem_name}}"
+        nas_server: "{{nas_server_id}}"
+        state: "present"
+
+    - set_fact:
+        snapshot_list: "{{ fs_details.filesystem_details.snapshots | list }}"
+
+    - name: Delete filesystem snapshot
+      dellemc_powerstore_filesystem_snapshot:
+        <<: *connection_vars
+        snapshot_id: "{{ item.id }}"
+        state: "absent"
+      loop: "{{ snapshot_list}}"
+
+    - name: Remove Protection Policy
+      register: result_fs
+      dellemc_powerstore_filesystem:
+        <<: *connection_vars
+        filesystem_name: "{{filesystem_name}}"
+        description: "{{description}}"
+        nas_server: "{{nas_server_id}}"
+        protection_policy: ""
+        state: "present"
+
+    - name: Delete NFS export (filesystem)
+      dellemc_powerstore_nfs:
+        <<: *connection_vars
+        nfs_export_name: "{{export_name1}}"
+        filesystem: "{{filesystem_name}}"
+        nas_server: "{{nas_server_id}}"
+        path: "{{path1}}"
+        state: "absent"
+
+    - name: Delete Existing Filesystem
+      register: result_fs
+      dellemc_powerstore_filesystem:
+        <<: *connection_vars
+        filesystem_name: "{{filesystem_name}}"
+        description: "{{description}}"
+        nas_server: "{{nas_server_id}}"
+        state: "absent"

@@ -1,5 +1,5 @@
-storage_protocol: iscsi
 storage_ip: xx.xx.xx.xx
+iscsi_target: xx.xx.xx.xx
 os_type: Linux
 disk_vendor: PowerStore
 snapshot_name: "snapshot-{{ inventory_hostname }}-{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
@@ -7,29 +7,41 @@ snapshot_retention: "3"
 snapshot_retention_unit: days
 
 volumes:
-  - volname: data_volume_3
+  - volname: linux_data_volume_3
     vgname: ''
     volsize: 100
     volcapunit: 'GB'
     voldesc: "{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
     volperfpol: high
-    protpolicy: ansible_protection_policy1
+    protpolicy: 'ansible_protection_policy2'
+    mount_path: /data/fs1
+    fstype: xfs
+    mount_opts: noatime
 
-  - volname: data_volume_4
+  - volname: linux_data_volume_4
     vgname: ''
     volsize: 100
     volcapunit: 'GB'
     voldesc: "{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
     volperfpol: high
-    protpolicy: ansible_protection_policy2
-
-fs:
-  - mount_path: /data/fs1
-    volname: data_volume_3
+    protpolicy: 'ansible_protection_policy2'
+    mount_path: /data/fs2
     fstype: xfs
+    mount_opts: noatime,_netdev
 
-  - mount_path: /data/fs2
-    volname: data_volume_4
-    fstype: xfs
+map_volumes:
+  - volname: linux_data_volume_3
+    storage_protocol: fc
+
+  - volname: linux_data_volume_4
+    storage_protocol: iscsi
+
+# The following applies to bare metal hosts
+# network_interfaces:
+#   - conn_name: iscsi-int
+#     ifname: em1
+#     type: ethernet
+#     ip4: xx.xx.xx.xx/xx
+#     state: present
 
 

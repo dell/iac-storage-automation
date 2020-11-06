@@ -1,0 +1,43 @@
+#!/usr/bin/env ansible-playbook
+- name: Create a PowerStore volume and a VPLEX virtual volume from it
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - powerstore_vars/connection.yml
+    - powerstore_vars/credentials.yml
+
+  vars:
+    PowerStoreinput: &connection_vars
+      array_ip: "{{ array_ip }}"
+      password: "{{ password }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+    powerstore_host: "VPLEXCL1"
+    vol_name: "volumevplex1"
+
+  tasks:
+    - name: Create new volume and add to VPLEX storage group
+      dellemc_powerstore_volume:
+        <<: *connection_vars
+        vol_name: "{{vol_name}}"
+        size: 10
+        cap_unit: "GB"
+        state: 'present'
+        host: "{{ powerstore_host }}"
+        mapping_state: 'mapped'
+      register: pstorevoldetails
+    - debug: var=pstorevoldetails
+    
+    - set_fact:
+        pstorevolwwn: "{{pstorevoldetails.volume_details.wwn.split('.')[1]}}"
+    - debug: var=pstorevolwwn
+
+    - name: Create new VPLEX virtual volume
+      include_role:
+        name: createvirtualvol
+      vars:
+        storage_volume_id: "VPD83T3:{{pstorevolwwn}}"
+        new_storage_volume_name: "volumetest"
+    - name: Print virtual volume details
+      debug:  var=vplexvirtvol
