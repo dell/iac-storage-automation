@@ -1,0 +1,36 @@
+---
+########## REQUIRES PYTHON3 and BOTO3 #############
+- name: ECS Create S3 bucket
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    ################### TEST DRIVE EXAMPLE #####################
+    #username: ""
+    #password: ""
+    #ECS_host: "object.ecstestdrive.com"
+    #bucketName: "ansible_aws_s3_bucket"
+    
+    ################### PHYSICAL ECS EXAMPLE ###################
+    username: "" ### use a data api user (object user)
+    password: ""
+    ECS_host: "" ### E.g. "192.168.2.21:9021" ### use data api port
+    bucketName: "" ### Enter bucket name, E.g. ansible_bucket
+
+  tasks:
+
+    - name: Connect to ECS | Create S3 bucket
+      aws_s3:
+        bucket: "{{ bucketName }}"
+        mode: create
+        permission: public-read
+        s3_url: "https://{{ ECS_host }}/"
+        validate_certs: no
+        encrypt: no
+        rgw: true
+        aws_access_key: "{{ username }}"
+        aws_secret_key: "{{ password }}"
+      register: results_CreateBucket
+
+    #- debug:
+         #msg="{{ results_CreateBucket }}"
+

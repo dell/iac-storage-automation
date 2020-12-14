@@ -1,0 +1,126 @@
+---
+- name: ECS create new NameSpace Admin
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    username: ""
+    password: ""
+    ECS_host: ""
+    NameSpace: ""
+    NewAdmin: ""
+    ######################################
+    ##### Do Not Edit - Leave Blank ######
+    ns_admins: '' ### Do not edit ####
+    ######################################
+
+  tasks:
+
+  - name: Get ECS API authentication token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/login
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+      return_content: yes
+    register: results_login
+    no_log: True
+
+  - block:
+    - name: Connect to ECS | check for existing Object User "{{ NewAdmin }}"
+      uri:
+        validate_certs: no
+        url: "https://{{ECS_host}}/object/users/{{ NewAdmin }}/info.json?namespace={{ NameSpace }}"
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        body_format: json
+        return_content: yes
+      failed_when: NameSpace == "" or NewAdmin == "" or results_checkObjUser.status != 200
+      register: results_checkObjUser
+
+    rescue:
+    - name: Connect to ECS | check for existing Mgmt User "{{ NewAdmin }}"
+      uri:
+        validate_certs: no
+        url: "https://{{ECS_host}}/vdc/users/{{ NewAdmin }}.json"
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        body_format: json
+        return_content: yes
+      failed_when: NameSpace == "" or NewAdmin == "" or results_checkMgmtUser.status != 200
+      register: results_checkMgmtUser
+
+  - name: Connect to ECS | Get list of existing namespace admins 
+    uri:
+      validate_certs: no
+      url: "https://{{ ECS_host }}/object/namespaces/namespace/{{ NameSpace }}.json"
+      method: GET 
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      body_format: json
+      return_content: yes
+    register: results_GetNSadmins
+    changed_when: false
+
+  - name: Save existing NameSpace Admins
+    set_fact: 
+      existing_admins: "{{ results_GetNSadmins | json_query('json.namespace_admins') }}"
+
+  ###########################################################################
+  ###### format adding new NS admin, specifically remove or add comma #######
+  - name: "Filter for Namespace Admin | skip if existing Namespace Admins"
+    set_fact: 
+      ns_admins: "{{ results_GetNSadmins | json_query('json.namespace_admins') }}"
+    when: existing_admins == ""
+  
+  - name: "Filter for existing Namespace Admins | skip if no existing Admins found"
+    set_fact: 
+      ns_admins: "{{ results_GetNSadmins | json_query('json.namespace_admins') }}, "
+    when: existing_admins != ""
+  ###########################################################################
+
+  - name: Connect to ECS | add new namespace Admin "{{ NewAdmin }}" | skip if exists
+    uri:
+      validate_certs: no
+      url: "https://{{ ECS_host }}/object/namespaces/namespace/{{ NameSpace }}.json"
+      method: PUT
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      body_format: json
+      body:
+        {
+          namespace_admins: "{{ ns_admins }}{{ NewAdmin }}"
+        }
+      return_content: yes
+    register: results_CreateNameSpace
+    failed_when: false 
+    changed_when:  results_CreateNameSpace.status == 200
+    when: NewAdmin not in ns_admins
+
+  - name: Logout ECS API token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/logout
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      return_content: yes
+    register: results_logout
+

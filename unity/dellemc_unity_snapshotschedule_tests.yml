@@ -1,0 +1,202 @@
+---
+- name: Snapshot schedule operations on Unity
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    unispherehost: 'hostname/ip'
+    verifycert: False
+    username: 'user'
+    password: 'password'
+    state_present: 'present'
+    state_absent: 'absent'
+  tasks:
+  - name: Create snapshot schedule (Rule Type - every_n_hours)
+    register: result
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_N_Hours_Testing"
+      type: "every_n_hours"
+      interval: 6
+      desired_retention: 3
+      state: "{{state_present}}"
+
+  - name: Set id
+    set_fact:
+      id: "{{result.snapshot_schedule_details.id}}"
+
+  - name: Create snapshot schedule (Rule Type - every_n_hours) - Idempotency
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_N_Hours_Testing"
+      type: "every_n_hours"
+      interval: 6
+      desired_retention: 3
+      state: "{{state_present}}"
+
+  - name: Create snapshot schedule (Rule Type - every_day)
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_Day_Testing"
+      type: "every_day"
+      hours_of_day:
+        - 8
+        - 14
+      auto_delete: True
+      state: "{{state_present}}"
+
+  - name: Create snapshot schedule (Rule Type - every_n_days)
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_N_Day_Testing"
+      type: "every_n_days"
+      day_interval: 2
+      desired_retention: 2
+      retention_unit: "days"
+      state: "{{state_present}}"
+
+  - name: Create snapshot schedule (Rule Type - every_week)
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_Week_Testing"
+      type: "every_week"
+      days_of_week:
+        - MONDAY
+        - FRIDAY
+      hour: 12
+      minute: 30
+      desired_retention: 4
+      state: "{{state_present}}"
+
+  - name: Create snapshot schedule (Rule Type - every_month)
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_Month_Testing"
+      type: "every_month"
+      day_of_month: 17
+      auto_delete: True
+      state: "{{state_present}}"
+
+  - name: Get snapshot schedule details using name
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_N_Hours_Testing"
+      state: "{{state_present}}"
+
+  - name: Get snapshot schedule details using id
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      id: "{{id}}"
+      state: "{{state_present}}"
+
+  - name: Modify snapshot schedule details id
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      id: "{{id}}"
+      type: "every_n_hours"
+      interval: 8
+      state: "{{state_present}}"
+
+  - name: Modify snapshot schedule details id - Idempotency
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      id: "{{id}}"
+      type: "every_n_hours"
+      interval: 8
+      state: "{{state_present}}"
+
+  - name: Modify snapshot schedule using name
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_Day_Testing"
+      type: "every_day"
+      desired_retention: 2
+      auto_delete: False
+      state: "{{state_present}}"
+
+  - name: Delete snapshot schedule using id
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      id: "{{id}}"
+      state: "{{state_absent}}"
+
+  - name: Delete snapshot schedule using name
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_Day_Testing"
+      state: "{{state_absent}}"
+
+  - name: Delete snapshot schedule using name
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_N_Day_Testing"
+      state: "{{state_absent}}"
+
+  - name: Delete snapshot schedule using name
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_Week_Testing"
+      state: "{{state_absent}}"
+
+  - name: Delete snapshot schedule using name
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_Month_Testing"
+      state: "{{state_absent}}"
+
+  - name: Delete snapshot schedule using name - Idempotency
+    dellemc_unity_snapshotschedule:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      name: "Ansible_Every_Month_Testing"
+      state: "{{state_absent}}"

@@ -1,0 +1,36 @@
+---
+########## REQUIRES PYTHON3 and BOTO3 #############
+- name: ECS delete S3 bucket and all objects
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    ################### TEST DRIVE EXAMPLE #####################
+    #username: "131887216500386603@ecstestdrive.emc.com" ### access key
+    #password: "" ### secretkey
+    #ECS_host: "object.ecstestdrive.com"
+    #bucketName: "ansible_bucket"
+          
+    ################### PHYSICAL ECS EXAMPLE ###################
+    username: ""
+    password: ""
+    ECS_host: "" ### E.g. "192.168.2.21:9021" ### use data api port
+    bucketName: "" ### E.g. "ansible_bucket"
+
+  tasks:
+
+    - name: Connect to ECS | Delete S3 bucket
+      aws_s3:
+        bucket: "{{ bucketName }}"
+        mode: delete
+        permission: public-read
+        s3_url: "https://{{ ECS_host }}/"
+        validate_certs: no
+        encrypt: no
+        rgw: true
+        aws_access_key: "{{ username }}"
+        aws_secret_key: "{{ password }}"
+      register: results_DeleteBucket
+
+   #- debug:
+     #  msg="{{ results_DeleteBucket }}"
+

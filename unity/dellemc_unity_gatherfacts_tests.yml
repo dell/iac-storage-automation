@@ -1,0 +1,96 @@
+---
+- name: Gatherfacts Module Operations on Unity
+  hosts: localhost
+  connection: local
+  vars:
+    unispherehost: 'hostname/ip'
+    port: '443'
+    verifycert: False
+    username: 'user'
+    password: 'password'
+
+  tasks:
+    - name: Get detailed list of Unity entities
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+        gather_subset:
+          - host
+          - fc_initiator
+          - iscsi_initiator
+          - cg
+          - storage_pool
+          - vol
+          - snapshot_schedule
+
+    - name: Get information of Unity array.
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+
+    - name: Get list of Unity hosts.
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+        gather_subset:
+          - host
+
+    - name: Get list of FC initiators on Unity array.
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+        gather_subset:
+          - fc_initiator
+
+    - name: Get list of ISCSI initiators on Unity array.
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+        gather_subset:
+          - iscsi_initiator
+
+    - name: Get list of consistency groups on Unity array.
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+        gather_subset:
+          - cg
+
+    - name: Get list of storage pools on Unity array.
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+        gather_subset:
+          - storage_pool
+
+    - name: Get list of volumes on Unity array.
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+        gather_subset:
+          - vol
+
+    - name: Get list of snapshot schedules on Unity array.
+      dellemc_unity_gatherfacts:
+        unispherehost: "{{unispherehost}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        verifycert: "{{verifycert}}"
+        gather_subset:
+          - snapshot_schedule

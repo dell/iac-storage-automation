@@ -1,0 +1,27 @@
+---
+- name: Storage pool Module Operations on Unity
+  hosts: localhost
+  connection: local
+  vars:
+    unispherehost: 'hostname/ip'
+    verifycert: False
+    username: 'user'
+    password: 'password'
+    pool_name: "Pool1"
+    new_pool_name: "new_pool2"
+    fast_vp_enabled: "enabled"
+    fast_cache_enabled: "enabled"
+    pool_description: "updated"
+
+  tasks:
+  - name: Get the details of Storage pool by name
+    register: result
+    dellemc_unity_storagepool:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      pool_name: "{{pool_name}}"
+      state: "present"
+  - debug:
+      var: result

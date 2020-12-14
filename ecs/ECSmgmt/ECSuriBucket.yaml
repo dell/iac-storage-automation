@@ -1,0 +1,101 @@
+---
+########### USE ECS MGMT API ACCOUNT TO create S3 bucket #############
+- name: ECS create new S3 bucket with management API
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    username: "" ### ECS management user, E.g. root
+    password: "" ### ECS management user password, E.g. ChangeMe
+    ECS_host: "" ### E.g. "192.168.2.21:4443"
+    NameSpace: "" ### E.g. "ansible_ns"
+    bucketOwner: "" ### bucket owner, E.g. "ansible_admin"
+    BucketName: "" ### E.g. "new-s3-bucket"
+
+  tasks:
+
+  - name: Get ECS API authentication token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/login
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+      return_content: yes
+    register: results_login
+    no_log: True
+
+  - block:
+    - name: Connect to ECS | check for existing Object User "{{ bucketOwner }}"
+      uri:
+        validate_certs: no
+        url: "https://{{ECS_host}}/object/users/{{ bucketOwner }}/info.json?namespace={{ NameSpace }}"
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        body_format: json
+        return_content: yes
+      failed_when: NameSpace == "" or bucketOwner == "" or BucketName == "" or results_checkObjUser.status != 200
+      register: results_checkObjUser
+
+    rescue:
+    - name: Connect to ECS | check for existing Mgmt User "{{ bucketOwner }}"
+      uri:
+        validate_certs: no
+        url: "https://{{ECS_host}}/vdc/users/{{ bucketOwner }}.json"
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        body_format: json
+        return_content: yes
+      failed_when: NameSpace == "" or bucketOwner == "" or BucketName == "" or results_checkMgmtUser.status != 200
+      register: results_checkMgmtUser
+
+  - name: Connect to ECS | create new bucket "{{ BucketName }}"
+    uri:
+      validate_certs: no
+      url: https://{{ECS_host}}/object/bucket.json
+      method: POST
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      body_format: json
+      body:
+        {
+          "name": "{{ BucketName }}",
+          "owner": "{{ bucketOwner }}",
+          "filesystem_enabled": "false",
+          "head_type": "s3",
+          "retention": "3",
+          "namespace": "{{ NameSpace }}"
+        }
+      #return_content: yes
+    failed_when: NameSpace == "" or bucketOwner == "" or BucketName == ""
+    changed_when: results_CreateBucket.status == 200
+    register: results_CreateBucket
+
+  #- debug:
+  #  var: results_CreateBucket
+
+  - name: Logout ECS API token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      #url: https://{{ECS_host}}/logout?force=true
+      url: https://{{ECS_host}}/logout
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      return_content: yes
+    register: results_logout
+

@@ -1,0 +1,105 @@
+---
+- name: check configuration and log subsequent configuration changes
+  hosts: Dell_EMC_ECS
+  gather_facts: yes ### Required true to store date and time from ansible_date_time variable
+  vars:
+    DateTimeStamp: "{{ansible_date_time.date}}.{{ansible_date_time.time}}" ### date time example
+    username: "" ### E.g. "root"
+    password: "" ### E.g. "ChangeMe"
+    ECS_host: "" ### E.g. "192.168.2.21:4443"
+    LogDir: "" ### E.g. "./ECSauditlog/"
+    nameSpace: "" ### E.g. "ansible_ns"
+    ######################################################################
+    #### Edit only as required - File is used to store previous config ###
+    ECSPrevState: "{{LogDir}}ECSauditConfig.prev" 
+    ######################################################################
+
+  tasks:
+
+    - name: ECS API basic authentication
+      uri:
+        validate_certs: no
+        user: "{{ username }}"
+        password: "{{ password }}"
+        url: https://{{ECS_host}}/login
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+        return_content: yes
+      register: results_login
+      no_log: True
+
+    ### Conenct to ECS with auth token and get updated VDC node list    
+    - name: Connect to ECS and get CCA details
+      uri:
+        validate_certs: no
+        url: "{{ item }}"
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        return_content: no
+      with_items:
+        - "https://{{ECS_host}}/vdc/nodes"
+        - "https://{{ECS_host}}/object/bucket?namespace={{ nameSpace }}"
+      register: results_CCA
+    
+    - name: Save ECS API query item and json output to new fact
+      set_fact:
+        results_all_json: "{{ results_CCA | json_query('results[*].[item,json]') }}" ## loop capable ##
+
+    - name: Check or create log directory
+      file: 
+        state: directory
+        path: "{{ LogDir }}"
+        recurse: true
+      changed_when: false
+
+    - name: Check previous config state
+      file: 
+        state: touch
+        path: "{{ ECSPrevState }}"
+      changed_when: lookup('file', ECSPrevState ) != results_all_json | to_nice_json
+      notify: log_previous_state
+
+      ### If changes detected run all previous notify:handlers
+    - name: Execute handlers - Save Previous and Current Config State to audit log
+      meta: flush_handlers
+
+    - name: save ECS current state to previous state for next playbook run
+      copy:
+        content: "{{ results_all_json | to_nice_json }}"
+        dest: "{{ ECSPrevState }}"
+      changed_when: false
+
+    - name: Logout ECS API token
+      uri:
+        validate_certs: no
+        user: "{{ username }}"
+        password: "{{ password }}"
+       #url: https://{{ECS_host}}/logout?force=true
+        url: https://{{ECS_host}}/logout
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+        return_content: yes
+      register: results_logout
+
+  ### Save previous and current changes for audit purposes ###
+  handlers:
+
+    - name: log_previous_state
+      copy:
+        content: "{{ lookup('file', ECSPrevState) }}"
+        dest: "{{LogDir}}{{ DateTimeStamp }}.ECS_original.log"
+      notify: log_current_state
+
+    - name: log_current_state
+      copy:
+        content: "{{ results_all_json | to_nice_json }}"
+        dest: "{{LogDir}}{{ DateTimeStamp }}.ECS_change.log"
+
