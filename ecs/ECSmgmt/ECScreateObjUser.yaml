@@ -1,0 +1,117 @@
+---
+- name: ECS create an Object user
+  hosts: Dell_EMC_ECS
+  gather_facts: true  ### True required to store date and time for log
+  vars:
+    ###################################################################################################
+    DateTimeStamp: "{{ansible_date_time.date}}.{{ansible_date_time.time}}" ### get date & time
+    logHost: "localhost" ### change log saved to localhost
+    ###################################################################################################
+   
+    ###################################################################################################
+    ##### PHYSICAL ECS EXAMPLE ##### EDITED BELOW VARIBLES TO SUIT YOUR ENVIRONMENT ###################
+    ###################################################################################################
+    ##### EDITED BELOW VARIBLES TO SUIT YOUR ENVIRONMENT #####
+    logFile: "" ##E Example: "/tmp/ECS_Create_User.{{ DateTimeStamp }}.log"
+    username: "" ### E.g. "root"
+    password: "" ### E.g. "ChangeMe"
+    ECS_host: "" ### E.g. "192.168.2.21:4443"
+    nameSpace: "" ### Add your ECS NameSpace
+    objUser: "" ### Object User to add, e.g. "ansible_user"
+    secretKey: "" ### Please note: leave blank to automatically generate secret keys
+    ###################################################################################################
+
+  tasks:
+
+  - name: Get ECS API authentication token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/login
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+      return_content: yes
+    register: results_login
+    no_log: True
+
+  - name: Connect to ECS | create new Object User "{{ objUser }}" in NameSpace "{{ nameSpace }}"
+    uri:
+      validate_certs: no
+      url: https://{{ECS_host}}/object/users.json
+      method: POST
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      body_format: json
+      body:
+        {
+          user: "{{ objUser }}",
+          namespace: "{{ nameSpace }}"
+        }
+      return_content: yes
+    register: results_CreateObjUser
+    changed_when: results_CreateObjUser.status == 200
+    failed_when: nameSpace == "" or objUser = ""
+
+  #- debug:
+  #    var: results_CreateObjUser
+
+  - name: Connect to ECS | add secret key to "{{ objUser }}" in NameSpace "{{ nameSpace }}"
+    uri:
+      validate_certs: no
+      url: "https://{{ ECS_host }}/object/user-secret-keys/{{ objUser }}"
+      method: POST
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      body_format: json
+      body:
+        {
+          namespace: "{{ nameSpace }}",
+          secretkey: "{{secretKey }}"
+        }
+      return_content: yes
+    register: results_CreateSecretKey
+    changed_when: results_CreateSecretKey.status == 200
+    failed_when: false
+    notify: userlist
+
+  #- debug:
+  #    var: results_CreateSecretKey
+
+  - name: execute ansible handlers
+    meta: flush_handlers
+  
+  - name: Logout ECS API token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      #url: https://{{ECS_host}}/logout?force=true
+      url: https://{{ECS_host}}/logout
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      return_content: yes
+    register: results_logout
+    no_log: True
+
+
+  handlers:
+
+    - name: userlist
+      lineinfile:
+        create: yes
+        mode: '0444'
+        dest: "{{ logFile }}"
+        line: "{{ results_CreateObjUser | json_query('results[*].[json]') | to_nice_json }} {{ results_CreateSecretKey | json_query('results[*].[json]') | to_nice_json }}" 
+        insertafter: EOF
+      failed_when: false
+      delegate_to: "{{ logHost }}"

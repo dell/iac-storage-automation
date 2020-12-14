@@ -1,0 +1,180 @@
+- name: Volume Operations
+  hosts: localhost
+  connection: local
+  vars:
+    unispherehost: 'hostname/ip'
+    verifycert: False
+    username: 'user'
+    password: 'password'
+    vol_name: "Ansible_vol1_test"
+    new_vol_name: "New_Ansible_vol1_test"
+    size: 2
+    pool_name: "ansible_unity_pool_2"
+    cap_GB: "GB"
+    description: "Ansible demo"
+    snap_schedule: "Ansible_test_SS1"
+    io_limit_policy: "Ansible_test_IO_limit_policy"
+    tiering_policy: "LOWEST"
+    is_thin: True
+    compression: True
+    sp: "SPA"
+    host_name: "Ansible_sample_host_2_Arin"
+    host_id: "Host_759"
+    hlu: 2
+    state_present: "present"
+    state_absent: "absent"
+    state_mapped: "mapped"
+    state_unmapped: "unmapped"
+
+  tasks:
+  - name: Create Volume
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      description: "{{description}}"
+      pool_name: "{{pool_name}}"
+      size: "{{size}}"
+      cap_unit: "{{cap_GB}}"
+      tiering_policy: "{{tiering_policy}}"
+      state: "{{state_present}}"
+    register: vol_result
+
+  - name: Create Volume - Idempotency
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      description: "{{description}}"
+      pool_name: "{{pool_name}}"
+      size: "{{size}}"
+      cap_unit: "{{cap_GB}}"
+      tiering_policy: "{{tiering_policy}}"
+      state: "{{state_present}}"
+
+  - name: Set vol_id
+    set_fact:
+      vol_id: "{{vol_result.volume_details.id}}"
+
+  - name: Expand Volume by volume id
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      size: 5
+      cap_unit: "{{cap_GB}}"
+      state: "{{state_present}}"
+
+  - name: Modify Volume attributes
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      tiering_policy: "AUTOTIER"
+      snap_schedule: "{{snap_schedule}}"
+      io_limit_policy: "{{io_limit_policy}}"
+      state: "{{state_present}}"
+
+  - name: Modify Volume attributes - Idempotency
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      tiering_policy: "AUTOTIER"
+      snap_schedule: "{{snap_schedule}}"
+      io_limit_policy: "{{io_limit_policy}}"
+      state: "{{state_present}}"
+
+  - name: Remove snap_schedule from a Volume
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      snap_schedule: ""
+      state: "{{state_present}}"
+
+  - name: Map Host by host_name to Volume
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      host_name: "{{host_name}}"
+      hlu: "{{hlu}}"
+      mapping_state: "{{state_mapped}}"
+      state: "{{state_present}}"
+
+  - name: Map Host by host_name to Volume- Idempotency
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      host_name: "{{host_name}}"
+      hlu: 2
+      mapping_state: "{{state_mapped}}"
+      state: "{{state_present}}"
+
+  - name: Unmap Host by host_name from Volume
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      host_name: "{{host_name}}"
+      mapping_state: "{{state_unmapped}}"
+      state: "{{state_present}}"
+
+  - name: Unmap Host by host_name from Volume -Idempotency
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      host_name: "{{host_name}}"
+      mapping_state: "{{state_unmapped}}"
+      state: "{{state_present}}"
+
+  - name: Get details of volume using id
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      state: "present"
+
+  - name: Delete a volume using id
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      state: "absent"
+
+  - name: Delete a volume using id -Idempotency
+    dellemc_unity_volume:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      state: "absent"
+

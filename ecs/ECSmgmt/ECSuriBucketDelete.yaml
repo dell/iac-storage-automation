@@ -1,0 +1,59 @@
+---
+########### USE ECS MGMT API with ECS_TESTDRIVE ACCOUNT #############
+- name: ECS delete bucket with management API
+  hosts: Dell_EMC_ECS
+  gather_facts: False
+  vars:
+    username: "" ### ECS management user, E.g. root
+    password: "" ### ECS management user password, E.g. ChangeMe
+    ECS_host: "" ### E.g. "192.168.2.21:4443"
+    NameSpace: "" ### E.g. "ansible_ns"
+    BucketName: "" ### E.g. "new-s3-bucket"
+
+  tasks:
+
+  - name: Get ECS API authentication token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/login
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+      return_content: yes
+    register: results_login
+    no_log: True
+
+  - name: Connect to ECS | Delete bucket {{ BucketName }}
+    uri:
+      validate_certs: no
+      url: https://{{ ECS_host }}/object/bucket/{{ BucketName }}/deactivate.json?namespace={{ NameSpace }}
+      method: POST
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      body_format: json
+    failed_when: NameSpace == "" or BucketName == ""
+    changed_when: results_DeleteBucket.status == 200
+    register: results_DeleteBucket
+
+  #- debug:
+       #var: results_DeleteBucket
+
+  - name: Logout ECS API token
+    uri:
+      validate_certs: no
+      user: "{{ username }}"
+      password: "{{ password }}"
+      url: https://{{ECS_host}}/logout?force=true
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        X-SDS-AUTH-TOKEN: "{{ results_login.x_sds_auth_token }}"
+      return_content: yes
+    register: results_logout
+

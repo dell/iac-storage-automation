@@ -1,0 +1,169 @@
+- name: Consistency Group Operations
+  hosts: localhost
+  connection: local
+  vars:
+    unispherehost: 'hostname/ip'
+    verifycert: False
+    username: 'user'
+    password: 'password'
+    cg_name: 'Ansible_CG_Testing'
+    new_cg_name: 'Ansible_CG_Rename_Testing'
+    description: "Ansible demo"
+    snap_schedule1: "Ansible_Test"
+    snap_schedule2: "CG_Test"
+    tiering_policy1: "LOWEST"
+    state_present: "present"
+    state_absent: "absent"
+    vol_state_present: "present-in-group"
+    vol_state_absent: "absent-in-group"
+
+  tasks:
+  - name: Create consistency group
+    register: result_cg
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      verifycert: "{{verifycert}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      cg_name: "{{cg_name}}"
+      description: "{{description}}"
+      snap_schedule: "{{snap_schedule1}}"
+      state: "{{state_present}}"
+
+  - name: Set cg_id
+    set_fact:
+      cg_id: "{{result_cg.consistency_group_details.id}}"
+
+  - name: Get details of consistency group using id
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_id: "{{cg_id}}"
+      state: "present"
+
+  - name: Add volumes to consistency group
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_id: "{{cg_id}}"
+      volumes:
+        - vol_name: "Ansible_cg-1"
+        - vol_id: "sv_1878"
+      vol_state: "{{vol_state_present}}"
+      state: "{{state_present}}"
+
+  - name: Add volumes to consistency group - Idempotency
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_id: "{{cg_id}}"
+      volumes:
+        - vol_name: "Ansible_cg-1"
+        - vol_id: "sv_1878"
+      vol_state: "{{vol_state_present}}"
+      state: "{{state_present}}"
+
+  - name: Rename consistency group
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_name: "{{cg_name}}"
+      new_cg_name: "{{new_cg_name}}"
+      state: "{{state_present}}"
+
+  - name: Rename consistency group - Idempotency
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_name: "{{new_cg_name}}"
+      new_cg_name: "{{new_cg_name}}"
+      state: "{{state_present}}"
+
+  - name: Modify consistency group details
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_name: "{{new_cg_name}}"
+      snap_schedule: "{{snap_schedule2}}"
+      tiering_policy: "{{tiering_policy1}}"
+      state: "{{state_present}}"
+
+  - name: Modify consistency group details - Idempotency
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_name: "{{new_cg_name}}"
+      snap_schedule: "{{snap_schedule2}}"
+      tiering_policy: "{{tiering_policy1}}"
+      state: "{{state_present}}"
+
+  - name: Remove volumes from consistency group
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_name: "{{new_cg_name}}"
+      volumes:
+        - vol_name: "Ansible_cg-1"
+        - vol_id: "sv_1878"
+      vol_state: "{{vol_state_absent}}"
+      state: "{{state_present}}"
+
+  - name: Remove volumes from consistency group - Idempotency
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_name: "{{new_cg_name}}"
+      volumes:
+        - vol_name: "Ansible_cg-1"
+        - vol_id: "sv_1878"
+      vol_state: "{{vol_state_absent}}"
+      state: "{{state_present}}"
+
+  - name: Delete consistency group
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_name: "{{new_cg_name}}"
+      state: "{{state_absent}}"
+
+  - name: Delete consistency group Idempotency
+    dellemc_unity_consistencygroup:
+      unispherehost: "{{unispherehost}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      cg_name: "{{new_cg_name}}"
+      state: "{{state_absent}}"
+
+
+
+
+
+
+
+
+
+
+
+
+
