@@ -1,0 +1,40 @@
+#Naming conventions using sg_name as prefix
+sg_name: ""
+portgroup_name: "{{ sg_name + '_PG' }}"
+mv_name: "{{ sg_name + '_MV' }}"
+
+#connection details
+unispherehost: ""
+universion: ""
+verifycert: False
+user: ""
+password: ""
+serial_no: ""
+
+#host
+host_name: ""
+
+#storage details
+service_level: ""
+srp: "SRP_1"
+
+#volume details
+volume_list:
+#  - vol_name: Ansible_Host_Dev1
+#   size: 1
+#    cap_unit: GB
+#  - vol_name: Ansible_Host_Dev2
+#    size: 2
+#    cap_unit: GB
+
+# Host Initiators
+initiators:
+#  - 20000025e500004f
+#  - 21fd0027f8c83fa4
+
+# Ports to be Used
+ports:
+#  - director_id: "FA-1D"
+#    port_id: "5"
+#  - director_id: "FA-2D"
+#   port_id: "5"

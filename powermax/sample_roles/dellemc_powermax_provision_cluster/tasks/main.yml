@@ -1,0 +1,72 @@
+---
+- name: Setting connection variables
+  set_fact:
+    input: &connection_vars
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      verifycert: "{{ verifycert }}"
+      user: "{{ user }}"
+      password: "{{ password }}"
+      serial_no: "{{ serial_no }}"
+  no_log: True
+
+# Create new storage group
+- name: Create empty storage group
+  dellemc.powermax.dellemc_powermax_storagegroup:
+    <<: *connection_vars
+    sg_name: "{{ sg_name }}"
+    service_level:  "{{ service_level }}"
+    srp: "{{ srp }}"
+    compression: True
+    state: "present"
+
+# Create new volumes and store them in sg created
+- name: Create volumes
+  register: result
+  dellemc.powermax.dellemc_powermax_volume:
+    <<: *connection_vars
+    sg_name: "{{ sg_name }}"
+    vol_name: "{{ item.vol_name }}"
+    size: "{{ item.size }}"
+    cap_unit: "{{ item.cap_unit }}"
+    state: "present"
+  with_items: "{{ volume_list }}"
+
+ # This task creates multiple hosts
+- name: Create multiple hosts
+  dellemc.powermax.dellemc_powermax_host:
+    <<: *connection_vars
+    host_name: "{{ item.host_name }}"
+    initiators: "{{ item.initiators }}"
+    initiator_state: 'present-in-host'
+    state: 'present'
+  with_items: "{{ hosts }}"
+
+# Create host group using
+- name: Create host group
+  dellemc.powermax.dellemc_powermax_hostgroup:
+    <<: *connection_vars
+    hostgroup_name: "{{ hostgroup_name }}"
+    state: "present"
+    hosts: "{{ item.host_name }}"
+    host_state: 'present-in-group'
+  with_items: "{{ hosts }}"
+
+# Create port group
+- name: Create port group
+  dellemc.powermax.dellemc_powermax_portgroup:
+    <<: *connection_vars
+    portgroup_name: "{{ portgroup_name }}"
+    state: "present"
+    ports:  "{{ ports }}"
+    port_state: 'present-in-group'
+
+# Creates a MV using elements created beforehand
+- name: Create MV with existing elements
+  dellemc.powermax.dellemc_powermax_maskingview:
+    <<: *connection_vars
+    mv_name: "{{ mv_name }}"
+    portgroup_name: "{{ portgroup_name }}"
+    hostgroup_name: "{{ hostgroup_name }}"
+    sg_name: "{{ sg_name }}"
+    state: 'present'
