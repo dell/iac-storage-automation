@@ -1,0 +1,72 @@
+---
+- name: Setting connection variables
+  set_fact:
+    input: &connection_vars
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      verifycert: "{{ verifycert }}"
+      user: "{{ user }}"
+      password: "{{ password }}"
+      serial_no: "{{ serial_no }}"
+  no_log: True
+
+# Get list of storage groups on the array.
+- name: Get list of Storage groups
+  dellemc.powermax.dellemc_powermax_gatherfacts:
+    <<: *connection_vars
+    gather_subset:
+      - sg
+  register: sg_list
+
+# This task deletes MV
+- name: Delete host masking view
+  dellemc.powermax.dellemc_powermax_maskingview:
+    <<: *connection_vars
+    mv_name: "{{ mv_name }}"
+    state: "absent"
+
+# Get storage details
+- name: Get details of the Storage Group
+  dellemc.powermax.dellemc_powermax_storagegroup:
+    <<: *connection_vars
+    sg_name: "{{ sg_name }}"
+    state: "present"
+  register: sg_details
+
+
+# Save list of volumes from storage group
+- name: Getting volumes and saving them in list
+  set_fact:
+    all_volumes_Id: "{{ sg_details.storage_group_volumes_details | list }}"
+
+# Delete Port group
+- name: Delete port group
+  dellemc.powermax.dellemc_powermax_portgroup:
+    <<: *connection_vars
+    portgroup_name: "{{ portgroup_name }}"
+    state: 'absent'
+
+# Deletes host
+- name: Delete host
+  dellemc.powermax.dellemc_powermax_host:
+    <<: *connection_vars
+    host_name: "{{ host_name }}"
+    state: 'absent'
+
+
+# Delete storage group
+- name: Delete Storage group
+  dellemc.powermax.dellemc_powermax_storagegroup:
+    <<: *connection_vars
+    sg_name: "{{ sg_name }}"
+    service_level: "{{ service_level }}"
+    srp: "{{ srp }}"
+    state: 'absent'
+
+# Deletes volumes from specified storage group
+- name: Delete Volumes from Storage Group {{ sg_name }}
+  dellemc.powermax.dellemc_powermax_volume:
+    <<: *connection_vars
+    vol_id: "{{ item.volumeId }}"
+    state: 'absent'
+  loop: "{{ all_volumes_Id }}"
