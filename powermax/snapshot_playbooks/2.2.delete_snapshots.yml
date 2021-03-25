@@ -8,6 +8,8 @@
     - vars_files/connection.yml
     - vars_files/credentials.yml
     - vars_files/host_storage_details.yml
+  collections:
+    dellemc.powermax
   vars:
     src_sg_name: "{{ sg_name }}"
     test_sg_name: "{{ sg_name + '_LNKSG' }}"
