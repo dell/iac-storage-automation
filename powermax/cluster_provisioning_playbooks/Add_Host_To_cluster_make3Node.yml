@@ -8,7 +8,8 @@
     - vars_files/credentials.yml
     - vars_files/cluster_storage_details.yml
     - vars_files/3node_cluster_hosts.yml
-
+  collections:
+    dellemc.powermax
   vars:
     mv_name: "{{ mv_name }}"
     portgroup_name: "{{ portgroup_name }}"
