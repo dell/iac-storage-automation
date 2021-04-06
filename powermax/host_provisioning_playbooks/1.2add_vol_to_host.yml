@@ -7,6 +7,8 @@
     - vars_files/connection.yml
     - vars_files/credentials.yml
     - vars_files/1.2vars/host_storage_details_new_vol.yml
+  collections:
+    dellemc.powermax
 
   vars:
     mv_name: "{{ mv_name }}"
