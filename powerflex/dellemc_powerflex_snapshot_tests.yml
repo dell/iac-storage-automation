@@ -1,0 +1,191 @@
+- name: Snapshot Operations
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    gateway_host: '1.2.3.4'
+    username: 'user'
+    password: 'password'
+    verifycert: False
+  collections:
+    - dellemc.powerflex
+  tasks:
+  - name: Create snapshot
+    register: result
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_name: "ansible_snapshot_1"
+      vol_name: "ansible_volume"
+      state: "present"
+
+  - name: Create snapshot idempotency
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_name: "ansible_snapshot_1"
+      vol_name: "ansible_volume"
+      state: "present"
+
+  - name: Get snapshot id
+    set_fact:
+      snapshot_id: "{{result.snapshot_details.id}}"
+
+  - name: Create snapshot with retention
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_name: "ansible_snapshot_2"
+      vol_name: "ansible_volume"
+      desired_retention: 2
+      state: "present"
+
+  - name: Get snapshot details using snapshot id
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      state: "present"
+
+  - name: Modify the retention
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_name: "ansible_snapshot_2"
+      desired_retention: 4
+      state: "present"
+
+  - name: Modify the retention - idempotency
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_name: "ansible_snapshot_2"
+      desired_retention: 4
+      state: "present"
+
+  - name: Map snapshot to SDC
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      sdc:
+        - sdc_ip: "1.2.3.4"
+        - sdc_id: "sdcidvalue"
+      allow_multiple_mappings: True
+      sdc_state: "mapped"
+      state: "present"
+
+  - name: Map snapshot to SDC - Idempotency
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      sdc:
+      - sdc_ip: "1.2.3.4"
+      - sdc_id: "sdcidvalue"
+      allow_multiple_mappings: True
+      sdc_state: "mapped"
+      state: "present"
+
+  - name: Modify the attributes of SDC mapped to snapshot
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      sdc:
+      - sdc_ip: "1.2.3.4"
+        iops_limit: 11
+        bandwidth_limit: 4096
+      - sdc_id: "sdcidvalue"
+        iops_limit: 20
+        bandwidth_limit: 2048
+      sdc_state: "mapped"
+      state: "present"
+
+  - name: Modify the attributes of SDC mapped to snapshot - Idempotency
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      sdc:
+        - sdc_ip: "1.2.3.4"
+          iops_limit: 11
+          bandwidth_limit: 4096
+        - sdc_id: "sdcidvalue"
+          iops_limit: 20
+          bandwidth_limit: 2048
+      sdc_state: "mapped"
+      state: "present"
+
+  - name: Extend the size of snapshot
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      size: 16
+      state: "present"
+
+  - name: Unmap SDCs from snapshot
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      sdc:
+      - sdc_ip: "1.2.3.4"
+      - sdc_id: "sdcidvalue"
+      sdc_state: "unmapped"
+      state: "present"
+
+  - name: Rename snapshot
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      snapshot_new_name: "ansible_renamed_snapshot"
+      state: "present"
+
+  - name: Delete snapshot
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      remove_mode: "ONLY_ME"
+      state: "absent"
+
+  - name: Delete snapshot idempotency
+    dellemc_powerflex_snapshot:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      snapshot_id: "{{snapshot_id}}"
+      remove_mode: "ONLY_ME"
+      state: "absent"
