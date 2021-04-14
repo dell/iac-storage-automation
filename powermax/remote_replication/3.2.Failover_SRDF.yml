@@ -7,7 +7,8 @@
     - vars_files/connection.yml
     - vars_files/credentials.yml
     - vars_files/host_storage_details.yml
-
+  collections:
+    dellemc.powermax
   vars:
     remote_serial: "{{ remote_serial }}"
     input: &uni_connection_vars
