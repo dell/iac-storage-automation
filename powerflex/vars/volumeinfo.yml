@@ -1,0 +1,11 @@
+---
+protection_domain_name: "PD1"
+storage_pool_name: "SP1"
+
+vol_name: "ansible_volume_snap_source"
+vol_size: 8
+
+snapshot_name: "ansible_snapshot_1"
+snapshot_policy_name: "snap_policy_hourly"
+
+sdc_ip: "1.2.3.4"

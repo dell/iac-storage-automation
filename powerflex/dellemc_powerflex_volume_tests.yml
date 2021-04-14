@@ -1,0 +1,234 @@
+- name: Volume operations on powerflex array.
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    gateway_host: '1.2.3.4'
+    username: 'user'
+    password: 'password'
+    verifycert: False
+    protection_domain_name: "domain1"
+    storage_pool_name: "pool1"
+    snapshot_policy_name: "sample_snap_policy_1"
+    vol_name: "sample_ansible_volume_20"
+
+  collections:
+    - dellemc.powerflex
+
+  tasks:
+  - name: Create a volume
+    register: result
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      storage_pool_name: "{{storage_pool_name}}"
+      protection_domain_name: "{{protection_domain_name}}"
+      snapshot_policy_name: "{{snapshot_policy_name}}"
+      sdc:
+        - sdc_ip: "1.2.3.4"
+        - sdc_id: "sdcidvalue"
+      allow_multiple_mappings: True
+      sdc_state: "mapped"
+      size: 8
+      state: "present"
+
+  - name: Set volume id
+    set_fact:
+      vol_id: "{{result.volume_details.id}}"
+
+  - name: Create a volume Idempotency Case
+    register: result
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      storage_pool_name: "{{storage_pool_name}}"
+      protection_domain_name: "{{protection_domain_name}}"
+      snapshot_policy_name: "{{snapshot_policy_name}}"
+      sdc:
+        - sdc_ip: "1.2.3.4"
+        - sdc_id: "sdcidvalue"
+      allow_multiple_mappings: True
+      sdc_state: "mapped"
+      size: 8
+      state: "present"
+
+  - name: Get volume details using volume id
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      state: "present"
+
+  - name: Get volume details using volume name
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      state: "present"
+
+  - name: Modify the size
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      size: 16
+      state: "present"
+
+  - name: Modify the size idempotency case
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_name: "{{vol_name}}"
+      size: 16
+      state: "present"
+
+  - name: Map volume to SDC and remove snapshot policy
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      sdc:
+        - sdc_ip: "1.2.3.4"
+        - sdc_id: "sdcidvalue"
+      allow_multiple_mappings: True
+      snapshot_policy_name: ""
+      auto_snap_remove_type: "remove"
+      sdc_state: "mapped"
+      state: "present"
+
+  - name: Map volume to SDC and remove snapshot policy idempotency case
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      sdc:
+        - sdc_ip: "1.2.3.4"
+        - sdc_id: "sdcidvalue"
+      allow_multiple_mappings: True
+      snapshot_policy_name: ""
+      auto_snap_remove_type: "remove"
+      sdc_state: "mapped"
+      state: "present"
+
+
+  - name: Modify the attributes of SDC mapped to volume
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      sdc:
+      - sdc_ip: "1.2.3.4"
+        iops_limit: 11
+        bandwidth_limit: 4096
+      - sdc_id: "sdcidvalue"
+        iops_limit: 20
+        bandwidth_limit: 2048
+      allow_multiple_mappings: True
+      sdc_state: "mapped"
+      state: "present"
+
+  - name: Modify the attributes of SDC mapped to volume Idempotency
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      sdc:
+      - sdc_ip: "1.2.3.4"
+        iops_limit: 11
+        bandwidth_limit: 4096
+      - sdc_id: "sdcidvalue"
+        iops_limit: 20
+        bandwidth_limit: 2048
+      allow_multiple_mappings: True
+      sdc_state: "mapped"
+      state: "present"
+
+  - name: Unmap SDCs from volume
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      sdc:
+      - sdc_ip: "1.2.3.4"
+      - sdc_id: "sdcidvalue"
+      sdc_state: "unmapped"
+      state: "present"
+
+  - name: Unmap SDCs from volume idempotency case
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      sdc:
+      - sdc_ip: "1.2.3.4"
+      - sdc_id: "sdcidvalue"
+      sdc_state: "unmapped"
+      state: "present"
+
+  - name: Rename volume
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      vol_new_name: "ansible_renamed_volume"
+      state: "present"
+
+  - name: Rename volume idempotency case
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      vol_new_name: "ansible_renamed_volume"
+      state: "present"
+
+  - name: Delete volume
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      delete_snapshots: True
+      state: "absent"
+
+  - name: Delete volume idempotency
+    dellemc_powerflex_volume:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      vol_id: "{{vol_id}}"
+      delete_snapshots: True
+      state: "absent"
+
+

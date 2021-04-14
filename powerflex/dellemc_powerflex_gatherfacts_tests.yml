@@ -1,0 +1,45 @@
+---
+- name: Gatherfacts Module Operations on PowerFlex
+  hosts: localhost
+  connection: local
+  vars:
+    gateway_host: '1.2.3.4'
+    port: '443'
+    verifycert: False
+    username: 'user'
+    password: 'password'
+  collections:
+    - dellemc.powerflex
+  tasks:
+  - name: Get detailed list of PowerFlex Entities
+    dellemc_powerflex_gatherfacts:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      gather_subset:
+        - vol
+        - storage_pool
+        - protection_domain
+        - sdc
+        - sds
+        - snapshot_policy
+    register: subset_result
+  - debug:
+      var: subset_result
+
+  - name: Get specific volume details
+    dellemc_powerflex_gatherfacts:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      gather_subset:
+        - vol
+      filters:
+        - filter_key: "name"
+          filter_operator: "equal"
+          filter_value: "ansible_test"
+    register: subset_result
+  - debug:
+      var: subset_result
