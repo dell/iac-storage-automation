@@ -1,0 +1,33 @@
+# Variable File Describing End State for Provisioned Storage from PowerMax
+# Array
+---
+# Masking View Variables
+portgroup_name: Ansible_Host_PG
+mv_name: Ansible_Host_MV
+sg_name: Ansible_Host_SG
+host_name: Ansible_Host_IG
+
+# Front-End Ports to be Used, note all ports need to have same connectivity
+# Type, no mixing iSCSI and FC, or FC and NVMeOF
+
+port_list:
+  - director_id: FA-1D
+    port_id: 4 
+  - director_id: FA-2D
+    port_id: 4 
+
+# Host Initiators ensure colon is removed from input.
+
+host_initiators:
+  - 10000000cabffaee
+  - 10000000cccffaef
+
+# Storage Volumes to be created or added to Storage group.
+    
+volume_list:
+  - vol_name: Ansible_Dev1
+    size: 1
+    cap_unit: GB
+  - vol_name: Ansible_Dev2
+    size: 2
+    cap_unit: GB
