@@ -1,12 +1,12 @@
 ---
-- name: Provisioning storage for Powermax
+- name: Provisioning storage for Powermax Will create a masking view {{ mv_name }} on array {{ serial_no }} please log into unisphere host name {{ unispherehost }} to verify results.
   hosts: localhost
   connection: local
   gather_facts: no
   vars_files:
       - vars/connection.yml
       - vars/credentials.yml
-      - vars/host_storage_details2.yml
+      - vars/host_storage_details.yml
 
   vars:
     input: &uni_connection_vars
@@ -19,8 +19,11 @@
 
   collections:
     - dellemc.powermax
-  
+
   tasks:
+    - debug:
+        msg: "Starting provisioning tasks, run this playbook multiple times and review play recap to verify idempotency.  Why not add -vvv to ansible-playbook command to examine the returns"
+
     - name: Create Storage group
       dellemc.powermax.dellemc_powermax_storagegroup:
         <<: *uni_connection_vars

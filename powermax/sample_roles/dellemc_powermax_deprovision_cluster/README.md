@@ -1,9 +1,9 @@
 dellemc_powermax_provision_cluster
 =========
 
-Role to Deploy Storage for a cluster from PowerMax Array.  This role is 
-designed to be idempotent.  This role can take a variable number of hosts 
-and will provision and   
+Role to Deprovision a Cluster and it's associated storage, this role is 
+destructive and will delete masking view, host groups and volumes for the 
+supplied   
 
 Requirements
 ------------
@@ -93,6 +93,9 @@ Including an example of how to use your role (for instance, with variables passe
       vars:
         - vars/deprovision_variables.yml
         - vars/credentials.yml
+        - vars/connection.yml
+
+
 
       tasks:
         - name: Create MV using host
