@@ -1,0 +1,84 @@
+---
+# Provision a Test Dev Setup from Snapshot of production
+- name: Provisioning a test environment from source SG for Powermax
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/connection.yml
+    - vars/credentials.yml
+    - vars/host_storage_details.yml
+  vars:
+    src_sg_name: "{{ sg_name }}"
+    test_sg_name: "{{ sg_name + '_LNKSG' }}"
+
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  collections:
+    - dellemc.powermax
+
+  tasks:
+    - name: unlink Snapshot
+      dellemc.powermax.dellemc_powermax_snapshot:
+        <<: *uni_connection_vars
+        sg_name: "{{ src_sg_name }}"
+        snapshot_name: "ansible_sg_snap"
+        generation: 0
+        target_sg_name: "{{ test_sg_name }}"
+        link_status: "unlinked"
+        state: "present"
+
+    - name: Get all Generations of Snapshot for a Storage Group
+      dellemc.powermax.dellemc_powermax_snapshot:
+        <<: *uni_connection_vars
+        sg_name: "{{ src_sg_name }}"
+        snapshot_name: "ansible_sg_snap"
+        state: "present"
+      register: snap_details
+   
+    - set_fact:
+        snap_generations: "{{ snap_details.sg_snap_details | reverse | list }}"
+
+    - name: Delete Snapshots
+      dellemc.powermax.dellemc_powermax_snapshot:
+        <<: *uni_connection_vars
+        sg_name: "{{ src_sg_name }}"
+        snapshot_name: "ansible_sg_snap"
+        generation: "{{ item }}"  
+        target_sg_name: "{{ test_sg_name }}"
+        state: "absent"
+      loop: "{{ snap_generations }}"
+
+    - name: Get Storage Group Details for {{ test_sg_name }}
+      register: storage_details
+      dellemc.powermax.dellemc_powermax_storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "{{ test_sg_name }}"
+        service_level: "Diamond"
+        state: 'present'
+
+    - name: Delete {{ test_sg_name}} Storage group
+      dellemc.powermax.dellemc_powermax_storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "{{ test_sg_name }}"
+        service_level: "Diamond"
+        srp: "SRP_1"
+        state: 'absent'
+
+    - set_fact:
+        all_volumes_Id: "{{storage_details.storage_group_volumes | list}}"
+
+    - name: Delete all the volumes for {{ test_sg_name }}
+      dellemc.powermax.dellemc_powermax_volume:
+        <<: *uni_connection_vars
+        vol_id: "{{item}}"
+        state: 'absent'
+      loop: "{{ all_volumes_Id}}"
+
+
