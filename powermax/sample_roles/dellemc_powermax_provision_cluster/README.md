@@ -1,4 +1,4 @@
-dellemc_powermax_deprovision_cluster
+dellemc_powermax_provision_cluster
 =========
 
 Role to Deploy Storage for a cluster from PowerMax Array.  This role is 

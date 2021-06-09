@@ -7,8 +7,8 @@ before adding URI based calls.
 
 URI tasks will either pass or fail, there is no idempotency running these tasks.
 
-These exmaples serve as a how to, the funcionality in the playbooks here 
-has already been incorporated into the latest powermax collections but 
+These examples serve as a how-to, the functionality in the playbooks here 
+has already been incorporated into the latest PowerMax collections but 
 these still serve as nice examples on how similar opeations can be done.
 
 Latest PowerMax API documenation is here 

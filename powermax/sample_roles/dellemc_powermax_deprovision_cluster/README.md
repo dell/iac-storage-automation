@@ -12,7 +12,8 @@ PowerMax Ansible
 
 Role Variables
 --------------
-Variables required for these ansible roles are explained below, including value types expected with example inputs.. Required Variables are included in defaults/main.yml 
+Variables required for these ansible roles are explained below, including 
+value types expected with example inputs. Required Variables are included in defaults/main.yml 
 file with commented out example values.  Users can impose their own naming 
 conventions and pass required variables by other means at run time if 
 required.   
@@ -85,7 +86,7 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - name: Storage provisioning
+    - name: Storage deprovisioning
       hosts: localhost
       connection: local
       gather_facts: no
@@ -100,7 +101,7 @@ Including an example of how to use your role (for instance, with variables passe
       tasks:
         - name: Create MV using host
           include_role:
-            name: dellemc_powermax_provision_cluster
+            name: dellemc_powermax_deprovision_cluster
 
 License
 -------
