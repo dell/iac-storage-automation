@@ -71,7 +71,7 @@
     - set_fact:
         all_volumes_Id: "{{all_volumes_id.storage_group_volumes | list}}"
 
-    - name: Get Remote volumes Storage group
+    - name: Delete Remote volumes Storage group
       dellemc.powermax.dellemc_powermax_storagegroup:
         <<: *remote_array_connection_vars
         sg_name: "{{ sg_name }}"
