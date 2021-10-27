@@ -4,8 +4,8 @@
   connection: local
   gather_facts: no
   vars_files:
-    - vars_files/connection.yml
-    - vars_files/credentials.yml
+    - vars/connection.yml
+    - vars/credentials.yml
 
   tasks:
     - name: Get Health Check

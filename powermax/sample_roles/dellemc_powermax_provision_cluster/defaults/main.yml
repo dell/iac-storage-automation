@@ -10,7 +10,7 @@
 #sg_name: "GG-cluster"
 #service_level: "Diamond"
 #srp: "SRP_1"
-#hostgroup_name: "GG-Cluster"
+
 #portgroup_name: "{{ sg_name + '_PG' }}"
 #mv_name: "{{ sg_name + 'MV' }}"
 #
@@ -24,6 +24,7 @@
 #    cap_unit: "GB"
 #
 ##List of hosts to be created
+#hostgroup_name: "GG-Cluster"
 #hosts:
 #  - host_name: "GG-cluster-1"
 #    initiators:
@@ -32,6 +33,7 @@
 #  - host_name: "GG-cluster-2"
 #    initiators:
 #      - 20000009e500004f
+#      - 20000009e400004a
 #
 ## Ports to be Used
 #ports:

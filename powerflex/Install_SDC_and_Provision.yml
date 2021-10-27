@@ -1,0 +1,129 @@
+#!/usr/bin/env ansible-playbook
+# Be sure to specify an inventory file for the PowerFlex SDC installation to work
+
+- name: Create a VM from a template
+  hosts: localhost
+  vars_files:
+    - powerflex_vars.yml
+  vars:
+  gather_facts: no
+  tasks:
+  - name: Clone the template
+    vmware_guest:
+      hostname: "vcenterhostname"
+      username: "user"
+      password: "password"
+      validate_certs: False
+      name: "GUESTNAMEPREFIX0{{item.split('.')[3]}}"
+      template: RHEL8.3
+      datacenter: "Datacenter1"
+      folder: /templatefolder
+      state: poweredon
+      cluster: "Cluster1"
+      customization:
+        autologon: yes
+        hostname: "GUESTNAMEPREFIX0{{item.split('.')[3]}}"
+        dns_servers:
+        - 1.2.3.4
+        - 2.3.4.5
+        domain: domain.com
+        password: "passowrd"
+      networks:
+      - name: "networkname"
+        ip: "{{ item }}"
+        netmask: 255.255.255.0
+        gateway: 1.2.3.4
+      wait_for_ip_address: no
+    loop: "{{sdc_ips}}"
+
+- name: Install PowerFlex SDC using RPM on RHEL
+  hosts: vms
+  gather_facts: False
+  vars_files:
+    - powerflex_vars.yml
+  vars:
+  environment:
+    MDM_IP: "{{mdm_ip_list}}"
+  tasks:
+    - name: Copy over installation RPM
+      ansible.builtin.copy:
+        src: /root/powerflex/EMC-ScaleIO-sdc-3.5-1200.104.el8.x86_64.rpm
+        dest: /tmp/EMC-ScaleIO-sdc-3.5-1200.104.el8.x86_64.rpm
+
+    - name: Install PowerFlex SDC via Yum
+      yum:
+        name: /tmp/EMC-ScaleIO-sdc-3.5-1200.104.el8.x86_64.rpm
+        disable_gpg_check: yes
+        state: present
+
+- name: Rename SDCs and provision a volume to each
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+    - powerflex_vars.yml
+  vars:
+    input: &pf_connection_vars
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+    protection_domain_name: "PD1"
+    storage_pool_name: "SP1"
+
+  collections:
+    - dellemc.powerflex
+
+  tasks:
+  - name: Rename the SDC
+    dellemc_powerflex_sdc:
+      <<: *pf_connection_vars
+      sdc_ip: "{{item}}"
+      sdc_new_name: "GUESTNAMEPREFIX0{{item.split('.')[3]}}"
+      state: "present"
+    loop: "{{sdc_ips}}"
+
+  - name: pause for user input
+    pause: prompt='press enter to continue'
+    
+  - name: Create a volume
+    register: result
+    dellemc_powerflex_volume:
+      <<: *pf_connection_vars
+      vol_name: "GUESTNAMEPREFIX0{{item.split('.')[3]}}_vol"
+      storage_pool_name: "{{storage_pool_name}}"
+      protection_domain_name: "{{protection_domain_name}}"
+      sdc:
+        - sdc_ip: "{{item}}"
+      allow_multiple_mappings: True
+      sdc_state: "mapped"
+      size: 8
+      state: "present"
+    loop: "{{sdc_ips}}"
+
+  - name: pause for user input
+    pause: prompt='press enter to continue'
+
+  - name: Unmap volumes
+    register: result
+    dellemc_powerflex_volume:
+      <<: *pf_connection_vars
+      vol_name: "GUESTNAMEPREFIX0{{item.split('.')[3]}}_vol"
+      storage_pool_name: "{{storage_pool_name}}"
+      protection_domain_name: "{{protection_domain_name}}"
+      sdc:
+        - sdc_ip: "{{item}}"
+      allow_multiple_mappings: True
+      sdc_state: "unmapped"
+      state: "present"
+    loop: "{{sdc_ips}}"
+
+  - name: Delete volumes
+    register: result
+    dellemc_powerflex_volume:
+      <<: *pf_connection_vars
+      vol_name: "GUESTNAMEPREFIX0{{item.split('.')[3]}}_vol"
+      storage_pool_name: "{{storage_pool_name}}"
+      protection_domain_name: "{{protection_domain_name}}"
+      state: "absent"
+    loop: "{{sdc_ips}}"
