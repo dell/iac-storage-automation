@@ -1,0 +1,6 @@
+[vms]
+1.2.3.4 ansible_user=root ansible_ssh_pass=password
+1.2.3.5 ansible_user=root ansible_ssh_pass=password
+1.2.3.6 ansible_user=root ansible_ssh_pass=password
+1.2.3.7 ansible_user=root ansible_ssh_pass=password
+1.2.3.8 ansible_user=root ansible_ssh_pass=password

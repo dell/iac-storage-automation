@@ -1,7 +1,7 @@
 ---
 - name: Create snapshots on Dell EMC PowerStore
   hosts: all
-  vars_files: 
+  vars_files:
     - ps_vars.yml
   vars:
   tasks:

@@ -1,0 +1,44 @@
+- name: SDC Operations
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    gateway_host: '1.2.3.4'
+    username: 'user'
+    password: 'password'
+    verifycert: False
+  collections:
+    - dellemc.powerflex
+  tasks:
+  - name: Get sdc details using sdc ip
+    register: result
+    dellemc_powerflex_sdc:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      sdc_ip: "1.2.3.4"
+      state: "present"
+
+  - name: Set sdc id
+    set_fact:
+      sdc_id: "{{result.sdc_details.id}}"
+
+  - name: Rename sdc using sdc id
+    dellemc_powerflex_sdc:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      sdc_id: "{{sdc_id}}"
+      sdc_new_name: "sdc_renamed"
+      state: "present"
+
+  - name: Get sdc details using sdc name
+    dellemc_powerflex_sdc:
+      gateway_host: "{{gateway_host}}"
+      username: "{{username}}"
+      password: "{{password}}"
+      verifycert: "{{verifycert}}"
+      sdc_name: "sdc_renamed"
+      state: "present"
