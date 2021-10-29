@@ -22,7 +22,7 @@
         status_code:
           - 200
       register: response
-      changed_when: true
+      changed_when: never
 
     - debug:
         var: response
