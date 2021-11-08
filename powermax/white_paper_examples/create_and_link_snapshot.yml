@@ -24,9 +24,6 @@
     - dellemc.powermax
 
   tasks:
-   - debug:
-       var: test_sg_name
-
    - name: Create a Snapshot for a Storage Group
      dellemc.powermax.dellemc_powermax_snapshot:
         <<: *uni_connection_vars
@@ -38,15 +35,14 @@
      register: snapdetails
 
    - set_fact:
-       snap_id: "{{ snapdetails.sg_snap_details.snapid }}"
+       snap_id: '{{ snapdetails.sg_snap_details.snapid }}'
 
    - name: link Snapshot
      dellemc.powermax.dellemc_powermax_snapshot:
        <<: *uni_connection_vars
        sg_name: "{{ src_sg_name }}"
        snapshot_name: "ansible_sg_snap"
-       snapshot_id: "{{snap_id | int}}"
+       snapshot_id: "{{ snap_id }}"
        target_sg_name: "{{ test_sg_name }}"
        link_status: "linked"
        state: "present"
-
