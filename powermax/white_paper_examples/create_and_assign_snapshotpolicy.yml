@@ -1,6 +1,5 @@
 ---
-# Provision a Test Dev Setup from Snapshot of production
-- name: Provisioning a test environment from source SG for Powermax
+- name: Provision a new Storage group with associated snapshot policies
   hosts: localhost
   connection: local
   gather_facts: no
