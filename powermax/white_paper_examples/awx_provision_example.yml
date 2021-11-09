@@ -9,9 +9,9 @@
       serial_no: "{{ serial_no }}"
       password: "{{ password }}"
       unispherehost: "{{ unispherehost }}"
-      universion: "{{ universion }}"
+      universion: "92"
       user: "{{  user  }}"
-      verifycert: "{{ verifycert }}"
+      verifycert: false
     volume_list:
       - vol_name: Ansible_Dev1
         size: 1
@@ -33,4 +33,4 @@
         sg_name: "WhitePaper_SG"
         state: "present"
         volumes: "{{ volume_list }}"
-        vol_state: "present-in-group
+        vol_state: "present-in-group"
