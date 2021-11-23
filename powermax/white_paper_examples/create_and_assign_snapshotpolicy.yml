@@ -1,0 +1,36 @@
+---
+- name: Provision a new Storage group with associated snapshot policies
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/connection.yml
+    - vars/credentials.yml
+    - vars/host_storage_details2.yml
+  vars:
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  collections:
+    - dellemc.powermax
+
+  tasks:
+    - name: Create a snapshot policy
+      dellemc_powermax_snapshotpolicy:
+       <<: *uni_connection_vars
+       snapshot_policy_name: "examplepolicy"
+       interval: "10 Minutes"
+       secure: false
+       snapshot_count: 10
+       offset_mins: 2
+       compliance_count_warning: 6
+       compliance_count_critical: 4
+       storage_groups:
+         - "{{ sg_name }}"
+       storage_group_state: "present-in-policy"
+       state: "present"

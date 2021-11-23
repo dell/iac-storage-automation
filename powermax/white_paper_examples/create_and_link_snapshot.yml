@@ -1,0 +1,48 @@
+---
+# Provision a Test Dev Setup from Snapshot of production
+- name: Provisioning a test environment from source SG for Powermax
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/connection.yml
+    - vars/credentials.yml
+    - vars/host_storage_details2.yml
+  vars:
+    src_sg_name: "{{ sg_name }}"
+    test_sg_name: "{{ sg_name + '_LNKSG' }}"
+
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  collections:
+    - dellemc.powermax
+
+  tasks:
+   - name: Create a Snapshot for a Storage Group
+     dellemc.powermax.dellemc_powermax_snapshot:
+        <<: *uni_connection_vars
+        sg_name: "{{ src_sg_name }}"
+        snapshot_name: "ansible_sg_snap"
+        ttl: "1"
+        ttl_unit: "days"
+        state: "present"
+     register: snapdetails
+
+   - set_fact:
+       snap_id: '{{ snapdetails.sg_snap_details.snapid }}'
+
+   - name: link Snapshot
+     dellemc.powermax.dellemc_powermax_snapshot:
+       <<: *uni_connection_vars
+       sg_name: "{{ src_sg_name }}"
+       snapshot_name: "ansible_sg_snap"
+       snapshot_id: "{{ snap_id }}"
+       target_sg_name: "{{ test_sg_name }}"
+       link_status: "linked"
+       state: "present"

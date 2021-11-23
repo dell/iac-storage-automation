@@ -1,0 +1,36 @@
+---
+- name: Provisioning storage for Powermax Will create a New Storage Group with two 1 GB on array {{ serial_no }}
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "92"
+      user: "{{  user  }}"
+      verifycert: false
+    volume_list:
+      - vol_name: Ansible_Dev1
+        size: 1
+        cap_unit: GB
+      - vol_name: Ansible_Dev2
+        size: 1
+        cap_unit: GB
+
+  collections:
+    - dellemc.powermax
+
+  tasks:
+    - debug:
+        msg: "Starting provisioning tasks, run this playbook multiple times and review play recap to verify idempotency.  Why not add -vvv to ansible-playbook command to examine the returns"
+
+    - name: Create new volumes and SG
+      dellemc.powermax.dellemc_powermax_storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "WhitePaper_SG"
+        state: "present"
+        volumes: "{{ volume_list }}"
+        vol_state: "present-in-group"
