@@ -1,5 +1,5 @@
 ---
-- name: Provisioning storage for Powermax Will create a New Storage Group with 2 1 GB on array {{ serial_no }}
+- name: Provisioning storage for Powermax Will create a cascaded storage group with two child sg each with two 1 GB volumes.
   hosts: localhost
   connection: local
   gather_facts: no
