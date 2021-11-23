@@ -1,5 +1,5 @@
 ---
-- name: Provisioning a Strorage group with multiple snap policies.
+- name: Provisioning a Storage group with multiple snap policies.
   hosts: localhost
   connection: local
   gather_facts: no
