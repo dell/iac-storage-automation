@@ -1,0 +1,28 @@
+
+---
+- name: URI Example
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars_files/connection.yml
+    - vars_files/credentials.yml
+
+  tasks:
+    - name: Make Native REST call using URI to get information from PowerMax API
+      uri:
+        url: "https://{{ unispherehost }}:8443/univmax/restapi/92/system/symmetrix/{{ serial_no }}/health"
+        validate_certs: false
+        user: "{{ user }}"
+        password: "{{ password }}"
+        headers:
+          Content-Type: "application/json"
+        method: GET
+        body_format: json
+        status_code:
+          - 200
+      register: response
+      changed_when: never
+
+    - debug:
+        var: response

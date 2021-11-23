@@ -1,0 +1,37 @@
+---
+- name: Provisioning a Storage group with multiple snap policies.
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/connection.yml
+    - vars/credentials.yml
+    - vars/host_storage_details.yml
+  vars:
+    src_sg_name: "{{ sg_name }}"
+
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      universion: "{{ universion }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  collections:
+    - dellemc.powermax
+
+  tasks:
+    - name: Create a storage group with snapshot policies
+      dellemc_powermax_storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "ansible_test_sg"
+        service_level: "Diamond"
+        srp: "SRP_1"
+        volumes: "{{ volume_list }}"
+        vol_state: "present-in-group"
+        snapshot_policies:
+          - "DailyDefault"
+          - "HourlyDefault"
+        snapshot_policy_state: "present-in-group"
+        state: "present"
