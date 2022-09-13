@@ -1,0 +1,114 @@
+- name: de-provisioning storage for Ansible-Host on PowerMax Deleting All Volumes
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/connection.yml
+    - vars/credentials.yml
+    - vars/host_storage_details.yml
+
+  vars:
+    mv_name: "{{ mv_name }}"
+    portgroup_name: "{{ portgroup_name }}"
+    hostgroup_name: "{{ hostgroup_name }}"
+    sg_name: "{{ sg_name }}"
+    remote_serial: " {{ remote_serial }}"
+    input: &uni_connection_vars
+      serial_no: "{{ serial_no }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+    input: &remote_array_connection_vars
+      serial_no: "{{ remote_serial }}"
+      password: "{{ password }}"
+      unispherehost: "{{ unispherehost }}"
+      user: "{{  user  }}"
+      verifycert: "{{ verifycert }}"
+
+  collections:
+    - dellemc.powermax
+
+  tasks:
+    - name: Suspend SRDF
+      dellemc.powermax.srdf:
+        <<: *uni_connection_vars
+        remote_serial_no: "{{ remote_serial }}"
+        sg_name: "{{sg_name}}"
+        srdf_mode: 'Asynchronous'
+        srdf_state: 'Suspend'
+        state: 'present'
+      register: srdf_state
+
+    - debug:
+        var: srdf_state.SRDF_link_details
+
+    - name: Delete SRDF Pairing
+      dellemc.powermax.srdf:
+        <<: *uni_connection_vars
+        remote_serial_no: "{{ remote_serial }}"
+        sg_name: "{{sg_name}}"
+        srdf_mode: 'Asynchronous'
+        srdf_state: 'Establish'
+        state: 'absent'
+      register: srdf_state
+
+    - debug:
+        var: srdf_state.SRDF_link_details
+
+    - name: Get Remote volumes Storage group
+      dellemc.powermax.storagegroup:
+        <<: *remote_array_connection_vars
+        sg_name: "{{ sg_name }}"
+        service_level: "Diamond"
+        srp: "SRP_1"
+        state: 'present'
+      register: all_volumes_id
+
+    - set_fact:
+        all_volumes_Id: "{{all_volumes_id.storage_group_volumes | list}}"
+
+    - name: Delete Remote volumes Storage group
+      dellemc.powermax.storagegroup:
+        <<: *remote_array_connection_vars
+        sg_name: "{{ sg_name }}"
+        service_level: "Diamond"
+        srp: "SRP_1"
+        state: 'absent'
+
+    - name: Delete the old volumes on Remote Array
+      dellemc.powermax.volume:
+        <<: *remote_array_connection_vars
+        vol_id: "{{item}}"
+        state: 'absent'
+      loop: "{{ all_volumes_Id}}"
+
+
+    - name: Get Storage Group Details
+      register: storage_details
+      dellemc.powermax.storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "{{ sg_name }}"
+        service_level: "Diamond"
+        state: 'present'
+
+    - name: Delete Storage group
+      dellemc.powermax.storagegroup:
+        <<: *uni_connection_vars
+        sg_name: "{{ sg_name }}"
+        service_level: "Diamond"
+        srp: "SRP_1"
+        state: 'absent'
+
+    - set_fact:
+        all_volumes_Id: "{{storage_details.storage_group_volumes | list}}"
+
+    - name: Delete all the volumes
+      dellemc.powermax.volume:
+        <<: *uni_connection_vars
+        vol_id: "{{item}}"
+        state: 'absent'
+      loop: "{{ all_volumes_Id}}"
+        
+
