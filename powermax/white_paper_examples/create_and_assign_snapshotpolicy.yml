@@ -12,7 +12,6 @@
       serial_no: "{{ serial_no }}"
       password: "{{ password }}"
       unispherehost: "{{ unispherehost }}"
-      universion: "{{ universion }}"
       user: "{{  user  }}"
       verifycert: "{{ verifycert }}"
 
@@ -21,7 +20,7 @@
 
   tasks:
     - name: Create a snapshot policy
-      dellemc_powermax_snapshotpolicy:
+      dellemc.powermax.snapshotpolicy:
        <<: *uni_connection_vars
        snapshot_policy_name: "examplepolicy"
        interval: "10 Minutes"
