@@ -1,5 +1,5 @@
 ---
-- name: Provisioning a Storage group with multiple snap policies.
+- name: Protecting a Storage Group with SRDF
   hosts: localhost
   connection: local
   gather_facts: no
@@ -7,9 +7,9 @@
     - vars/connection.yml
     - vars/credentials.yml
     - vars/host_storage_details.yml
-  vars:
-    src_sg_name: "{{ sg_name }}"
 
+  vars:
+    remote_serial: "{{ remote_serial }}"
     input: &uni_connection_vars
       serial_no: "{{ serial_no }}"
       password: "{{ password }}"
@@ -21,16 +21,21 @@
     - dellemc.powermax
 
   tasks:
-    - name: Create a storage group with snapshot policies
+    - name: Create Storage Group
       dellemc.powermax.storagegroup:
         <<: *uni_connection_vars
-        sg_name: "ansible_test_sg"
-        service_level: "Diamond"
-        srp: "SRP_1"
+        sg_name: "{{ sg_name }}"
+        state: "present"
         volumes: "{{ volume_list }}"
         vol_state: "present-in-group"
-        snapshot_policies:
-          - "DailyDefault"
-          - "HourlyDefault"
-        snapshot_policy_state: "present-in-group"
-        state: "present"
+
+    - name: Protect Storage Group {{ sg_name }} with SRDF/A to array {{ remote_serial }}
+      dellemc.powermax.srdf:
+        <<: *uni_connection_vars
+        remote_serial_no: "{{ remote_serial }}"      
+        sg_name: "{{sg_name}}"      
+        srdf_mode: 'Asynchronous'
+        srdf_state: 'Establish'      
+        state: 'present'
+        wait_for_completion: True
+

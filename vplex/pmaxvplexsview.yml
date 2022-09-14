@@ -20,7 +20,7 @@
 
   tasks:
     - name: Create new volume and add to VPLEX storage group
-      dellemc_powermax_volume:
+      dellemc.powermax.volume:
         <<: *uni_connection_vars
         vol_name: "{{vol_name}}"
         sg_name: "{{powermax_vplex_sg}}"
