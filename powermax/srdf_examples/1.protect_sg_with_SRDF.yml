@@ -21,7 +21,7 @@
     - dellemc.powermax
 
   tasks:
-    - name: Create Storeage Group
+    - name: Create Storage Group
       dellemc.powermax.storagegroup:
         <<: *uni_connection_vars
         sg_name: "{{ sg_name }}"
