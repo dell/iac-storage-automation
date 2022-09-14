@@ -37,10 +37,10 @@
       dellemc.powermax.host:
         <<: *uni_connection_vars
         host_name: "{{ host_name }}"
+        host_type: "default"
         initiators: "{{ host_initiators }}"
         state: 'present'
         initiator_state: 'present-in-host'
-
     - name: Create port group "{{ portgroup_name }}"
       dellemc.powermax.portgroup:
         <<: *uni_connection_vars

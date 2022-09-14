@@ -12,7 +12,6 @@
       serial_no: "{{ serial_no }}"
       password: "{{ password }}"
       unispherehost: "{{ unispherehost }}"
-      universion: "{{ universion }}"
       user: "{{  user  }}"
       verifycert: "{{ verifycert }}"
 

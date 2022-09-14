@@ -12,9 +12,9 @@
       serial_no: "{{ serial_no }}"
       password: "{{ password }}"
       unispherehost: "{{ unispherehost }}"
-      universion: "{{ universion }}"
       user: "{{  user  }}"
       verifycert: "{{ verifycert }}"
+
     volume_list:
       - vol_name: Ansible_Dev1
         size: 1
