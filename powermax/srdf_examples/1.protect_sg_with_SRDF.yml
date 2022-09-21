@@ -33,7 +33,7 @@
       dellemc.powermax.srdf:
         <<: *uni_connection_vars
         remote_serial_no: "{{ remote_serial }}"      
-        sg_name: "{{sg_name}}"      
+        sg_name: "{{ sg_name }}"      
         srdf_mode: 'Asynchronous'
         srdf_state: 'Establish'      
         state: 'present'

@@ -38,7 +38,7 @@
       dellemc.powermax.volume:
         <<: *uni_connection_vars
         vol_name: "{{vol_name +'_' }}{{item}}"
-        sg_name: "{{sg_name}}"
+        sg_name: "{{ sg_name }}"
         size: 1
         cap_unit: "GB"
         state: 'present'

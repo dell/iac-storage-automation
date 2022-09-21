@@ -25,7 +25,7 @@
       dellemc.powermax.srdf:
         <<: *uni_connection_vars
         remote_serial_no: "{{ remote_serial }}"
-        sg_name: "{{sg_name}}"
+        sg_name: "{{ sg_name }}"
         srdf_state: 'Establish'
         state: 'present'
       register: srdf_state
@@ -40,7 +40,7 @@
       dellemc.powermax.srdf:
         <<: *uni_connection_vars
         remote_serial_no: "{{ remote_serial }}"      
-        sg_name: "{{sg_name}}"      
+        sg_name: "{{ sg_name }}"      
         srdf_state: 'Failover'      
         state: 'present'
         wait_for_completion: True
