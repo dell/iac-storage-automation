@@ -1,0 +1,93 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  vars:
+    target: "10.1.1.1"
+    username: 'admin'
+    password: 'password'
+    asset_name: 'name_of_asset_to_restore'
+    vcenter_id: 'abcd1234-abcd-59df-a5e9-a3e30fd61234'
+    datacenter_id: 'datacenter-3'
+    host_id: 'host-11'
+    cluster_id: 'domain-c6'
+    datastore_id: 'datastore-20'
+    filter: 'filter=name%20eq%20%22{{ asset_name }}%22'
+
+  tasks:
+
+    - name: Authenticate with PPDM
+      uri:
+        url: "https://{{ target }}:8443/api/v2/login"
+        method: POST
+        body:
+          username: '{{ username }}'
+          password: '{{ password }}'
+        body_format: json
+        headers:
+          Content-Type: 'application/json'
+        validate_certs: no
+      register: response
+
+    - debug:
+        msg: "Bearer {{ response.json.access_token }}"
+
+# Restore API call requires passing asset ID
+    - name: Getting asset ID
+      uri:
+        url: "https://{{ target }}:8443/api/v2/assets?{{ filter }}"
+        method: GET
+        headers:
+          Content-Type: 'application/json'
+          Authorization: 'Bearer {{ response.json.access_token }}'
+        validate_certs: no
+      register: assets
+
+    - debug:
+        var: assets
+
+# Restore API call requires passing backup ID
+    - name: Get latest backup ID
+      uri:
+        url: "https://{{ target }}:8443/api/v2/assets/{{ assets.json.content.0.id }}/copies"
+        method: GET
+        headers:
+          Content-Type: 'application/json'
+          Authorization: 'Bearer {{ response.json.access_token }}'
+        validate_certs: no
+      register: backupcopies
+
+    - debug:
+            msg: "Backup ID {{ backupcopies.json.content.0.id }} ended at {{ backupcopies.json.content.0.endTime }}"
+
+
+    - name: Perform the restore
+      uri:
+        url: "https://{{ target }}:8443/api/v2/restored-copies"
+        method: POST
+        body:
+          description: "Restore VM to New"
+          copyId: "{{ backupcopies.json.content.0.id }}"
+          restoreType: "TO_ALTERNATE"
+          restoredCopiesDetails:
+            targetVmInfo:
+              inventorySourceId: "{{ vcenter_id }}"
+              vmName: "Restored_{{ asset_name }}"
+              dataCenterMoref: "{{ datacenter_id }}"
+              clusterMoref: "{{ cluster_id }}"
+              hostMoref: "{{ host_id }}"
+              dataStoreMoref: "{{ datastore_id }}"
+              vmPowerOn: false
+              vmReconnectNic: false
+        body_format: json
+        headers:
+          Content-Type: 'application/json'
+          Authorization: 'Bearer {{ response.json.access_token }}'
+        validate_certs: no
+        status_code: 201
+      register: restore_job
+
+    - debug:
+            msg: "{{ restore_job }}"
+
+
