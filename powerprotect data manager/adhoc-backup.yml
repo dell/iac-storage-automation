@@ -1,0 +1,83 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  vars:
+    asset_name: "name_of_asset_to_back_up"
+    target: "10.1.1.1"
+    username: "admin"
+    password: "password"
+    # The filter syntax contains spaces and doublequotes. This trick helps us to build it
+    filter: 'filter=name%20eq%20%22{{ asset_name }}%22'
+
+  tasks:
+
+    - name: Authenticate with PPDM
+      uri:
+        url: "https://{{ target }}:8443/api/v2/login"
+        method: POST
+        body:
+          username: '{{ username }}'
+          password: '{{ password }}'
+        body_format: json
+        headers:
+          Content-Type: 'application/json'
+        validate_certs: no
+        use_proxy: no
+      register: response
+
+    - debug:
+        msg: "Bearer {{ response.json.access_token }}"
+
+# Triggering a backup is doing by passing the asset ID, so we need to get it first    
+    - name: Getting asset ID
+      uri:
+        url: "https://{{ target }}:8443/api/v2/assets?{{ filter }}"
+        method: GET
+        headers:
+          Content-Type: 'application/json'
+          Authorization: 'Bearer {{ response.json.access_token }}'
+        validate_certs: no
+      register: assets
+
+    - debug:
+        var: assets
+
+
+    - name: Trigger the backup
+      uri:
+        url: "https://{{ target }}:8443/api/v2/asset-backups"
+        method: POST
+        body: >
+          { "assetId" : "{{ assets.json.content.0.id }}", "backupType" : "FULL" }
+        body_format: json
+        headers:
+          Content-Type: 'application/json'
+          Authorization: 'Bearer {{ response.json.access_token }}'
+        validate_certs: no
+        status_code: 201
+      register: trigger
+
+    - debug:
+        var: trigger
+
+    - debug:
+        msg: "Job ID: {{ trigger.json.taskId }}"
+
+    - name: Get Job status
+      uri:
+        url: "https://{{ target }}:8443/api/v2/activities/{{ trigger.json.taskId }}"
+        method: GET
+        headers:
+          Content-Type: 'application/json'
+          Authorization: 'Bearer {{ response.json.access_token }}'
+        validate_certs: no
+        status_code: 200
+      register: jobDetails
+      until: "'COMPLETED' in jobDetails.json.state" 
+      retries: 20
+      delay: 30
+
+    - debug:
+        msg: "Job status {{ jobDetails.json.result.status }}, bytes transferred {{ jobDetails.json.result.bytesTransferred }}"
+

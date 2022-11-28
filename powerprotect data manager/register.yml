@@ -1,0 +1,74 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  vars:
+    target: "10.1.1.1"
+    username: "admin"
+    password: "password"
+    policy_name: "goldPLC"
+    asset_name: "name_of_asset_to_register"
+    # The syntax of filters in PPDM requires spaces and double quotes. Defining them here does the trick
+    filter: "filter=name%20eq%20%22{{ policy_name }}PLC%22"
+    filter2: "filter=name%20eq%20%22{{ asset_name }}%22"
+
+  tasks:
+    - name: Login to PPDM
+      uri:
+        url: "https://{{ target }}:8443/api/v2/login"
+        method: POST
+        body:
+          username: '{{ username }}'
+          password: '{{ password }}'
+        body_format: json
+        validate_certs: no
+      register: login_info
+
+    - debug:
+        msg: "{{ login_info.json.access_token }}"
+
+
+    - name: Get Policy ID from Name
+      uri:
+        url: "https://{{ target }}:8443/api/v2/protection-policies?{{ filter }}"
+        method: GET
+        validate_certs: no
+        headers:
+          Authorization: "Bearer {{ login_info.json.access_token }}"
+          Content-Type: "application/json"
+      register: policy_details
+
+    - debug:
+        msg: "{{ policy_details.json.content.0.id }}"
+
+
+    - name: Get Asset ID from Name
+      uri:
+        url: "https://{{ target }}:8443/api/v2/assets?{{ filter2 }}"
+        method: GET
+        validate_certs: no
+        headers:
+          Authorization: "Bearer {{ login_info.json.access_token }}"
+          Content-Type: "application/json"
+      register: asset_details
+
+    - debug:
+        msg: "{{ asset_details.json.content.0.id }}"
+
+# This API call requires the IDs of the policy and the asset from previous tasks
+    - name: Add Asset to Policy
+      uri:
+        url: "https://{{ target }}:8443/api/v2/protection-policies/{{ policy_details.json.content.0.id }}/asset-assignments"
+        method: POST
+        body:
+          - "{{ asset_details.json.content.0.id }}" 
+        body_format: json
+        headers:
+          Authorization: "Bearer {{ login_info.json.access_token }}"
+          Content-Type: "application/json"
+        validate_certs: no
+        status_code: 204
+      register: registration
+
+    - debug:
+        msg: "{{ registration }}"
