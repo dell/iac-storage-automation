@@ -3,7 +3,7 @@ terraform {
     bucket = "terraform-powermax"
     key = "terraform.tfstate"
 
-    endpoint = "http://10.246.91.191:9000"
+    endpoint = "http://bucketipaddress:9000"
 
     access_key="iKt9MFbR1G0jnDDX"
     secret_key="D8randomaoh"
