@@ -1,4 +1,5 @@
-# SDC names and VMware names are different so 
+# Host names in PowerMax and VMware names are different
+# The esxi[0] map to the same physical host as pmax[0]
 variable "hosts" {
   description = "List of ESXi hosts connected to PowerMax"
   default     = {
