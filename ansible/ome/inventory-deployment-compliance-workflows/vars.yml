@@ -1,0 +1,10 @@
+hostname: "100.97.136.62" #old...."100.97.136.242"
+username: "admin"
+password: "Linux@123"
+idrac_ip: "100.100.207.198"
+idrac_user: "root"
+idrac_password: "Dell@123"
+device_service_tag: "DLR6Q03"
+service_tags: []
+inventory_issues: []
+fault_details: []

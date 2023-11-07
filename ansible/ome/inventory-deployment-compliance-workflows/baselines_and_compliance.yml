@@ -1,0 +1,260 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+   
+
+    - name: Create a compliance template from deploy template
+      dellemc.openmanage.ome_template:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: "clone"
+        template_name: "email_deploy_template"
+        template_view_type: "Compliance"
+        attributes:
+          Name: "email_compliance_template"
+
+    
+
+    - name: Retrieve basic inventory of all devices. 
+      dellemc.openmanage.ome_device_info:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+      register: device_info_result
+    
+    - name: get all service tags
+      set_fact:
+        service_tags: "{{ service_tags + [item.DeviceServiceTag] }}"
+      loop: "{{ device_info_result.device_info.value }}"
+      no_log: true
+
+
+    - name: Create a device group
+      dellemc.openmanage.ome_groups:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        name: "demo-group-all"
+        
+    
+    - name: Add devices to a static device group 
+      dellemc.openmanage.ome_device_group:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        name: "demo-group-all"
+        device_service_tags: "{{service_tags}}"
+      
+    - name: Create a configuration compliance baseline using an existing template
+      dellemc.openmanage.ome_configuration_compliance_baseline:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: create
+        template_name: "email_compliance_template"
+        description: "SNMP Email setting"
+        names: "baseline_email"
+        device_group_names: demo-group-all
+
+    
+
+    - name: Retrieve the compliance report of all of the devices in the specified configuration compliance baseline.
+      dellemc.openmanage.ome_configuration_compliance_info:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        baseline: "baseline_email"
+      register: compliance_report
+      delegate_to: localhost
+    
+
+    - name: store the variable to json
+      copy: 
+        content: "{{ compliance_report | to_nice_json }}"
+        dest: "./output-json/compliance_report.json"
+      delegate_to: localhost
+    
+
+    - name: Extract service tags of devices with highest level compliance status
+      set_fact:
+        non_compliant_devices: "{{ non_compliant_devices | default([]) + [device.Id] }}"
+      loop: "{{ compliance_report.compliance_info }}"
+      loop_control:
+        loop_var: device
+      when: device.ComplianceStatus > 1 
+      no_log: true
+
+
+    - name: Display variable
+      debug:
+          var: non_compliant_devices
+    
+
+    - name: Remediate a specified non-complaint devices to a configuration compliance baseline using device IDs # noqa: args[module]
+      dellemc.openmanage.ome_configuration_compliance_baseline:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: "remediate"
+        names: "baseline_email"
+        device_ids: "{{ non_compliant_devices }}"
+      when: "non_compliant_devices | length > 0"
+      delegate_to: localhost
+      
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # - name: Filter the non compliant device based on the retrieved compliance report.
+    #   ansible.builtin.set_fact:
+    #     non_compliance_devices: "{{ compliance_report.compliance_info | json_query(jquery | default('')) | map(attribute='Id') | list }}"
+    #   vars:
+    #     jquery: 'value[?ComplianceAttributeGroups.ComplianceStatus==3].Id'
+
+
+
+    # - name: Display variable
+    #   debug:
+    #       var: non_compliance_devices
+    
+
+      # - name: Create a template from a deploy template
+    #   dellemc.openmanage.ome_template:
+    #     hostname: "{{ hostname }}"
+    #     username: "{{ username }}"
+    #     password: "{{ password }}"
+    #     validate_certs: no
+    #     command: "create"
+    #     device_service_tag: "DLR6Q03"
+    #     template_view_type: "Compliance"
+    #     attributes:
+    #       Name: "Config-Compliance"
+    #       Description: "Configuration Compliance Template"
+    #       Fqdds: "IDRAC"
+    #   delegate_to: localhost
+    
+    
+    # - name: Display variable
+    #   debug:
+    #       var: compliance_report
+    
+
+   
+    # - name: Display variable
+    #   debug:
+    #       var: non_compliance_devices
+    
+    # - name: Check top-level ComplianceStatus
+    #   debug:
+    #     msg: "The top-level ComplianceStatus is {{ compliance_report.compliance_info[0].ComplianceAttributeGroups[0].ComplianceReason }}"
+    #   loop: "{{ compliance_report.compliance_info }}"
+    #   when: item.ComplianceStatus is defined
+    
+    # - name: Drill down ComplianceStatus
+    #   debug:
+    #     #msg: "Next level ComplianceStatus is {{ compliance_report.compliance_info[0].ComplianceAttributeGroups[0].ComplianceSubAttributeGroups[1].Attributes[0] }}"
+    #     msg: " Status {{ item.ComplianceStatus }}: {{ item.ComplianceReason }}"
+    #   loop: "{{ compliance_report.compliance_info[0].ComplianceAttributeGroups[0].ComplianceSubAttributeGroups }}"
+    #   when: item.ComplianceStatus!=1
+    #   loop_control:
+    #     label: "Compliance for {{ item.DisplayName }}..."
+
+    # - name: Drill down ComplianceStatus
+    #   debug:
+    #     #msg: "Next level ComplianceStatus is {{ compliance_report.compliance_info[0].ComplianceAttributeGroups[0].ComplianceSubAttributeGroups[1].Attributes[0] }}"
+    #     msg: "ComplianceStatus is {{ item.ComplianceStatus }}: {{ item.ComplianceReason }}"
+    #   loop: "{{ compliance_report.compliance_info[0].ComplianceAttributeGroups[0].ComplianceSubAttributeGroups[1].Attributes }}"
+    #   #when: item.ComplianceStatus is defined
+    #   loop_control:
+    #     label: "Processing an {{ item.AttributeId }}..."  
+
+    # - name: Extract ComplianceStatus within ComplianceSubAttributeGroups
+    #   set_fact:
+    #     compliance_statuses: "{{ compliance_statuses | default([]) + sub_attribute_statuses }}"
+    #   loop: "{{ compliance_report.compliance_info[0].ComplianceAttributeGroups[0].ComplianceSubAttributeGroups }}"
+    #   loop_control:
+    #     loop_var: device
+    #   vars:
+    #     sub_attribute_statuses: "{{ device.ComplianceAttributeGroups | map(attribute='ComplianceSubAttributeGroups') | flatten | map(attribute='ComplianceStatus') | list }}"
+
+      
+
+    # - name: Determine the lowest ComplianceStatus
+    #   set_fact:
+    #     lowest_compliance_status: "{{ compliance_statuses | min }}"
+    # - name: Check top-level ComplianceStatus
+    #   debug:
+    #     msg: "The top-level ComplianceStatus is {{ item.ComplianceStatus }}"
+    #   loop: "{{ compliance_report.compliance_info[0].ComplianceAttributeGroups[0].ComplianceSubAttributeGroups[1] }}"
+      #when: item.ComplianceStatus is defined  
+        
+    # - name: Create a template from a reference device.
+    #   dellemc.openmanage.ome_template:
+    #     hostname: "{{ ome_hostname }}"
+    #     username: "{{ ome_user }}"
+    #     password: "{{ ome_password }}"
+    #     validate_certs: no
+    #     device_service_tag: "GMSTC42"
+    #     attributes:
+    #       Name: "device-template-GMSTC42"
+    #       Description: "New Template based on GMSTC42"
+
+
+    # - name: Create a new device group
+    #   dellemc.openmanage.ome_groups:
+    #     hostname: "{{ ome_hostname }}"
+    #     username: "{{ ome_user }}"
+    #     password: "{{ ome_password }}"
+    #     validate_certs: no
+    #     name: "windows-group"
+    #     description: "windows group"
+        
+
+    # - name: Add devices to a static device group by using the group name and device IDs
+    #   dellemc.openmanage.ome_device_group:
+    #     hostname: "{{ ome_hostname }}"
+    #     username: "{{ ome_user }}"
+    #     password: "{{ ome_password }}"
+    #     validate_certs: no
+    #     name: "windows-group"
+    #     device_service_tags:
+    #       - "GMSTC42"
+    #       - "HZ7N6Q2"
+
+    # C O P I L O T
+    # extract highest level compliance status from compliance report and store the corresponding service tags
+    # - name: Extract ComplianceStatus within ComplianceSubAttributeGroups
+    #   set_fact:
+    #     compliance_statuses: "{{ compliance_statuses | default([]) + sub_attribute_statuses }}"
+    #   loop: "{{ compliance_report.compliance_info }}"
+    #   loop_control:
+    #     loop_var: device
+    #   no_log: true
+    #   vars:
+    #     sub_attribute_statuses: "{{ device.ComplianceAttributeGroups | map(attribute='ComplianceSubAttributeGroups') | flatten | map(attribute='ComplianceStatus') | list }}"
+
+    # - name: Display variable
+    #   debug:
+    #       var: compliance_statuses
+
+    # loop over compliance_report.compliance_info and store the service tags of devices where the highest level compliance status is 3
