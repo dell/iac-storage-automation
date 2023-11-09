@@ -1,0 +1,114 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+   
+
+    - name: Create a compliance template from deploy template
+      dellemc.openmanage.ome_template:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: "clone"
+        template_name: "email_deploy_template"
+        template_view_type: "Compliance"
+        attributes:
+          Name: "email_compliance_template"
+
+    
+
+    - name: Retrieve basic inventory of all devices. 
+      dellemc.openmanage.ome_device_info:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+      register: device_info_result
+    
+    - name: get all service tags
+      set_fact:
+        service_tags: "{{ service_tags + [item.DeviceServiceTag] }}"
+      loop: "{{ device_info_result.device_info.value }}"
+      no_log: true
+
+
+    - name: Create a device group
+      dellemc.openmanage.ome_groups:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        name: "demo-group-all"
+        
+    
+    - name: Add devices to a static device group 
+      dellemc.openmanage.ome_device_group:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        name: "demo-group-all"
+        device_service_tags: "{{service_tags}}"
+      
+    - name: Create a configuration compliance baseline using an existing template
+      dellemc.openmanage.ome_configuration_compliance_baseline:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: create
+        template_name: "email_compliance_template"
+        description: "SNMP Email setting"
+        names: "baseline_email"
+        device_group_names: demo-group-all
+
+    
+
+    - name: Retrieve the compliance report of all of the devices in the specified configuration compliance baseline.
+      dellemc.openmanage.ome_configuration_compliance_info:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        baseline: "baseline_email"
+      register: compliance_report
+      delegate_to: localhost
+    
+
+    - name: store the variable to json
+      copy: 
+        content: "{{ compliance_report | to_nice_json }}"
+        dest: "./output-json/compliance_report.json"
+      delegate_to: localhost
+    
+
+    - name: Extract service tags of devices with highest level compliance status
+      set_fact:
+        non_compliant_devices: "{{ non_compliant_devices | default([]) + [device.Id] }}"
+      loop: "{{ compliance_report.compliance_info }}"
+      loop_control:
+        loop_var: device
+      when: device.ComplianceStatus > 1 
+      no_log: true
+
+
+    - name: Display variable
+      debug:
+          var: non_compliant_devices
+    
+
+    - name: Remediate a specified non-complaint devices to a configuration compliance baseline using device IDs # noqa: args[module]
+      dellemc.openmanage.ome_configuration_compliance_baseline:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: "remediate"
+        names: "baseline_email"
+        device_ids: "{{ non_compliant_devices }}"
+      when: "non_compliant_devices | length > 0"
+      delegate_to: localhost
+      
+   

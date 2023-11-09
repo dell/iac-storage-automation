@@ -1,0 +1,91 @@
+---
+
+- name: Initialize specifics structure
+  set_fact:
+    current_device: 
+      {
+        'service_tag': '',
+        'subsystem': [],
+        'Faults': [],
+        'Recommendations':[]
+      }
+
+
+- name: Assign fault specifics
+  set_fact:
+    current_device:
+      service_tag: "{{ device_item.service_tag }}"
+      Faults: "{{ current_device.Faults + [fault.Message] }}"
+      Recommendations: "{{ current_device.Recommendations + [fault.RecommendedAction] }}"
+  loop: "{{ device_item.fault_list }}"
+  loop_control:
+     loop_var: fault
+  when: device_item.fault_list is defined
+  no_log: true
+
+# - name: Append fault messages to current_device
+#   set_fact:
+#     current_device: 
+#       {
+#         'service_tag': current_device.service_tag,
+#         'Messages': current_device.Messages + fault.Message
+#       }
+#   loop: "{{ device_item.fault_list }}"
+#   loop_control:
+#      loop_var: fault
+#   when: device_item.fault_list is defined
+
+
+- name: Append current device to all_faults
+  set_fact:
+    fault_details: "{{ fault_details + [current_device] }}"
+
+# - name: Display Service Tag
+#   debug:
+#     msg: "Issues for device: {{ device_item.service_tag }}"
+
+# - name: Loop over fault_list for the service tag
+#   debug:
+#     msg: "Fault : {{ fault.Message }}"
+#   loop: "{{ device_item.fault_list }}"
+#   loop_control:
+#     loop_var: fault
+#   when: device_item.fault_list is defined
+#   no_log: true
+
+# - name: Add device
+#   set_fact:
+#         all_faults: >
+#           {{
+#           all_faults  + 
+#             [{
+#             'service_tag':device_item.service_tag,
+#             'Messages': [] 
+#             }] 
+#           }} 
+
+# - name: Create variable
+#   set_fact:
+#         all_faults[device_index-1].Messages[fault_index]: fault.Message 
+#   loop: "{{ device_item.fault_list }}"
+#   loop_control:
+#     loop_var: fault
+#     index_var: fault_index
+#   when: device_item.fault_list is defined
+
+# - name: Create variable
+#   set_fact:
+#         all_faults: >
+#           {{
+#           all_faults  + 
+#             [{
+#             'service_tag':device_item.service_tag,
+#             'Message' ~ index: fault.Message 
+#             }] 
+#           }} 
+#   loop: "{{ device_item.fault_list }}"
+#   loop_control:
+#     loop_var: fault
+#     index_var: index
+#   when: device_item.fault_list is defined
+  #no_log: true
