@@ -1,6 +1,6 @@
 import json
 
-with open('./output-json/api_output.json') as f:
+with open('../output-json/api_output.json') as f:
     data = json.load(f)
 
 for item in data['json']['AttributeGroups'][0]['SubAttributeGroups']:

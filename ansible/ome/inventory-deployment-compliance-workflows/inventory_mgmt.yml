@@ -73,7 +73,7 @@
         label: "{{item.service_tag}}"
 
     - name: Gather fault details
-      include_tasks: device_issues.yml
+      include_tasks: device_issues_loop.yml
       vars:
         device_item: "{{ item }}"
         device_index: "{{ index }}"
