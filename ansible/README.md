@@ -36,8 +36,8 @@ Inside each of the platform directories the examples will be categorized by the 
 * Playbooks to create resources using the buil-tin Ansible URI module directly to the ECS REST API
 * Playbooks to create and delete buckets using the built-in Ansible aws_s3 module  
 
-**[OME](ome)**
-* OpenManage Enterprise (OME) is the management platform for Dell PowerEdge server infrastructure. Playbooks show different OME workflows like inventory management, template based deployment and compliance and remediation. 
+**[PowerEdge](PowerEdge)**
+* The openmanage Ansible collection for Dell PowerEdge servers have modules and roles both for individual node iDRAC/Redfish management as well as OpenManage Enterprise (OME) management platform. Playbooks show different workflows like inventory management, template based deployment and compliance and remediation. 
 
 ## Documentation
 Each example contains a readme file with instructions on prerequisites, installation, and usage.  Be sure to also review supported resource versions and follow installation instructions for the underlying modules used in the examples per their documentation.
