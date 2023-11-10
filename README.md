@@ -12,6 +12,7 @@ Inside each of the platform directories the examples will be categorized by the 
     - [Unity](#unity)
     - [VPLEX](#vplex)
     - [ECS](#ecs)
+    - [PowerEdge Servers](#poweredge)
   - [Terraform](#terraform)
     - [PowerFlex](#powerflex-1)
     - [PowerMax](#powermax-1)
@@ -53,6 +54,8 @@ Inside each of the platform directories the examples will be categorized by the 
 * Playbooks to create resources using the built-in Ansible URI module directly to the ECS REST API
 * Playbooks to create and delete buckets using the built-in Ansible aws_s3 module
 
+### [PowerEdge Servers](ansible/poweredge)
+* The openmanage Ansible collection for Dell PowerEdge servers have modules and roles both for individual node iDRAC/Redfish management as well as OpenManage Enterprise (OME) management platform. Playbooks show different workflows like inventory management, template based deployment and compliance and remediation.
 
 ## Terraform
 
