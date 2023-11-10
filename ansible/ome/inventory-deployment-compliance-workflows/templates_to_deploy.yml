@@ -1,0 +1,68 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Get filtered template info based on name.
+    dellemc.openmanage.ome_template_info:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        system_query_options:
+          filter: "Name eq 'empty_template'"
+    register: template_info
+
+  - name: print template info
+    debug:
+      msg: "{{template_info}}"
+
+  - name: Create a template from a reference device.
+    dellemc.openmanage.ome_template:
+      hostname: "{{ hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      validate_certs: no
+      device_service_tag: "{{device_service_tag}}"
+      attributes:
+        Name: "{{device_service_tag}}-template"
+        Description: "ideal Template description"
+
+  - name: Clone a template
+    dellemc.openmanage.ome_template:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: "clone"
+        template_name: "empty_template"
+        attributes:
+          Name: "deploy_clone"
+    delegate_to: localhost
+
+  - name: Modify template
+    dellemc.openmanage.ome_template:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: "modify"
+        template_name: "deploy_clone"
+        attributes:
+          Attributes:
+            - DisplayName: 'iDRAC, RAC Email Alert, EmailAlert 1 Email Alert Address'
+              Value: "world123@test.com"
+              
+  - name: Deploy template on groups
+    dellemc.openmanage.ome_template:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: "deploy"
+        template_name: "deploy_clone"
+        device_group_names:
+          - "deploy_group"
+         
+
+  

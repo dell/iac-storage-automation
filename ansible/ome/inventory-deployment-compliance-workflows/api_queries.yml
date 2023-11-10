@@ -1,0 +1,51 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+  
+  - name: Get PowerScale API Session Token
+    ansible.builtin.uri:
+        url: "https://{{ hostname }}/api/SessionService/Sessions"
+        method: post
+        body_format: json
+        validate_certs: false
+        status_code: 200,201
+        body: |
+          {
+            "UserName": "{{ username }}",
+            "Password": "{{ password }}",
+            "SessionType":"API"
+          }
+    register: api_response
+    tags: "api-call"
+
+  - name: print api
+    debug:
+      msg: "{{api_response}}"
+    tags: "api-call"
+
+  - name: Store API auth token 
+    ansible.builtin.set_fact:
+            ome_auth_token: "{{ api_response.x_auth_token }}"
+    tags: "api-call"
+
+  
+  - name: Get attribute details
+    uri:
+       #url: "https://{{ hostname }}/api/TemplateService/Templates(1)/Views(1)/DeviceAttributeViewDetails"
+       url: "https://{{ hostname }}/api/TemplateService/Templates(11)/Views(1)/AttributeViewDetails"
+       validate_certs: false
+       method: get
+       #body_format: json
+       #body: |
+        # {"privileges":{{ admin_priv.json.privileges }}}
+       headers:
+         X-Auth-Token: "{{ ome_auth_token }}"
+       status_code: 200,201,204,409
+    register: api_output
+    
+  - name: Save device_info to a file
+    copy: 
+      content: "{{ api_output | to_nice_json }}"
+      dest: "./output-json/api_output.json"
