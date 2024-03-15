@@ -1,0 +1,44 @@
+{
+    "changed": false,
+    "clusters": {
+        "CLS01": {
+            "datacenter": "Datacenter",
+            "drs_default_vm_behavior": "fullyAutomated",
+            "drs_enable_vm_behavior_overrides": true,
+            "drs_vmotion_rate": 3,
+            "enable_ha": false,
+            "enabled_drs": false,
+            "enabled_vsan": false,
+            "ha_admission_control_enabled": true,
+            "ha_failover_level": 1,
+            "ha_host_monitoring": "enabled",
+            "ha_restart_priority": "medium",
+            "ha_vm_failure_interval": 30,
+            "ha_vm_max_failure_window": -1,
+            "ha_vm_max_failures": 3,
+            "ha_vm_min_up_time": 120,
+            "ha_vm_monitoring": "vmMonitoringDisabled",
+            "ha_vm_tools_monitoring": "vmMonitoringDisabled",
+            "hosts": [
+                {
+                    "folder": "/Datacenter/host/CLS01",
+                    "name": "esxi01.powerflex.lab"
+                }
+            ],
+            "moid": "domain-c3006",
+            "resource_summary": {
+                "cpuCapacityMHz": 8380,
+                "cpuUsedMHz": 255,
+                "memCapacityMB": 16380,
+                "memUsedMB": 3357,
+                "pMemAvailableMB": 0,
+                "pMemCapacityMB": 0,
+                "storageCapacityMB": 318720,
+                "storageUsedMB": 56617
+            },
+            "tags": [],
+            "vsan_auto_claim_storage": false
+        }
+    },
+    "failed": false
+}

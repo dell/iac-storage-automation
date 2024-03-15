@@ -1,0 +1,277 @@
+---
+- name: Provisioning datastore from PowerFlex
+  hosts: localhost
+  # connection: local
+  gather_facts: no
+  vars_files:
+    - vars/vsphere.yml
+    - vars/powerflex.yml
+    # - vars/datastore-details.yml
+
+  vars:
+    input: &vsphere_creds
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: False
+    input: &powerflex_creds
+      gateway_host: "{{ gateway_host }}"
+      username: "{{ pflex_username }}"
+      password: "{{ pflex_password }}"
+      verifycert: False
+      #port: "{{ port }}"
+
+  collections:
+    - community.vmware
+
+  tasks:
+    
+    # esx_host_list
+    - name: VMware - Gather cluster info from given datacenter
+      community.vmware.vmware_cluster_info:
+        <<: *vsphere_creds
+        cluster_name: "{{ cluster_name }}"
+      delegate_to: localhost
+      register: cluster_info
+      tags:
+        - get_vsphr_info
+
+    # save the cluster info to a file
+    - name: Save cluster info to a file
+      copy:
+        content: "{{ cluster_info | to_nice_json }}"
+        dest: json_output/vsph_cluster_info.json
+      tags:
+        - get_vsphr_info
+
+    #loop through a vmware compute clusters and get the esxi hosts
+    - name: Get ESXi hosts from the cluster
+      set_fact:
+        esxi_host_list: "{{ cluster_info['clusters'][cluster_name]['hosts'] | map(attribute='name') | list }}"
+      tags:
+        - get_vsphr_info
+
+    # print the esxi hosts
+    - debug:
+        var: esxi_host_list
+      tags:
+        - get_vsphr_info
+        
+    - name: VMware - Gather info about vmhbas of all ESXi Host in the given Cluster
+      community.vmware.vmware_host_disk_info:
+        <<: *vsphere_creds
+        cluster_name: '{{ cluster_name }}'
+      delegate_to: localhost
+      register: host_vmhbas
+      tags:
+        - get_vsphr_info
+    
+    # save the host vmhbas to a file
+    - name: Save host vmhbas to a file
+      copy:
+        content: "{{ host_vmhbas | to_nice_json }}"
+        dest: json_output/vsph_host_vmhbas.json
+      tags:
+        - get_vsphr_info
+        
+    # get hosts_disk_info within the host_vmhbas
+    - name: Get hosts_disk_info within the host_vmhbas
+      set_fact:
+        host_disk_info: "{{ host_vmhbas['hosts_disk_info'][host_name] }}"
+      tags:
+        - get_vsphr_info
+    
+    #loop through the host_disk_info and get the canonical_name of each item
+    - name: vSphere disk summary
+      debug:
+        msg: 
+        - "Canonical name: {{ item.canonical_name }}"
+        - "Capacity (GB): {{ item.capacity_mb/1000 }}"
+      loop: "{{ host_disk_info }}"
+      loop_control:
+        loop_var: item
+        label: "Disk {{ item.display_name }}"
+      when: "'EMC Fibre' in item.display_name"
+      tags:
+        - get_vsphr_info
+
+    
+    
+    
+    - name: Get PowerFlex SDCs
+      dellemc.powerflex.info:
+        <<: *powerflex_creds
+        gather_subset:
+          - vol
+          # - storage_pool
+          # - protection_domain
+          - sdc
+          # - sds
+          # - snapshot_policy
+          # - device
+          # - rcg
+          # - replication_pair
+      register: powerflex_info
+      tags:
+        - get_pfx_info
+
+  
+    # - debug:
+    #     var: powerflex_info
+
+  
+    
+    # save info to a file
+    - name: Save pfx info to a file
+      copy:
+        content: "{{ powerflex_info | to_nice_json }}"
+        dest: json_output/pfx_info.json
+      tags:
+        - get_pfx_info
+
+    # print sdc details
+    - name: SDC Summary
+      debug:
+        msg: 
+          - "Name: {{ item.name }}"
+          - "IP: {{ item.sdcIp }}"
+          - "Type: {{ item.osType }}"
+          # - "{{ item }}"
+      loop: "{{ powerflex_info.SDCs }}"
+      loop_control:
+        loop_var: item
+        label: "SDC ID:{{item.id}}"
+      when: item.id is defined
+      tags:
+        - get_pfx_info
+
+    - name: Volumes Summary
+      debug:
+        msg: 
+          - "Name: {{ item.name }}"
+          - "Size: {{ item.sizeInKb/1024/1024 }} GB"
+          - "vol ID: {{ item.id }}"
+          # - "Number of mapped SDC: {{ item.statistics.numOfMappedSdcs }}"        
+          - "Mapped SDC: {{ item.mappedSdcInfo }}"
+      loop: "{{ powerflex_info.Volumes }}"
+      loop_control:
+        loop_var: item
+        label: "Volume details"
+        # when condition to check if the mappedSdcInfo is greater than zero
+      when: item.statistics.numOfMappedSdcs > 0
+      tags:
+        - get_pfx_info
+
+    - name: PowerFlex - Create a volume & map to SDCs
+      dellemc.powerflex.dellemc_powerflex_volume:
+        <<: *powerflex_creds
+        vol_name: "{{ pflex_volume_name }}"
+        storage_pool_name: "{{ storage_pool }}"
+        protection_domain_name: "{{ protection_domain }}"
+        #vol_type: "{{ 'THICK_PROVISIONED' if thin_or_thick == 'thick' else 'THIN_PROVISIONED' }}"
+        size: "{{ size }}"
+        allow_multiple_mappings: True
+        # TODO Make that section dynamic
+        sdc:
+          - sdc_name: "{{ esxi_sdc }}"
+            access_mode: "READ_WRITE"
+          # - sdc_id: "7fec677b00000009"
+          #   access_mode: "READ_WRITE"
+        sdc_state: "mapped"
+        state: "present"
+      register: newvol_details
+      tags:
+        - provision_storage
+    
+    - name: Get PowerFlex volumes
+      dellemc.powerflex.info:
+        <<: *powerflex_creds
+        gather_subset:
+          - vol
+      register: powerflex_info
+      tags:
+        - provision_storage
+
+       # print vol details
+    - name: Volumes Summary
+      debug:
+        msg: 
+          - "Name: {{ item.name }}"
+          - "Size: {{ item.sizeInKb/1024/1024 }} GB"
+          - "vol ID: {{ item.id }}"
+          # - "Number of mapped SDC: {{ item.statistics.numOfMappedSdcs }}"        
+          - "Mapped SDC: {{ item.mappedSdcInfo }}"
+      loop: "{{ powerflex_info.Volumes }}"
+      loop_control:
+        loop_var: item
+        label: "Volume details"
+        # when condition to check if the mappedSdcInfo is greater than zero
+      when: item.statistics.numOfMappedSdcs > 0
+      tags:
+        - provision_storage
+
+    
+    - name: VMware - Rescan HBA's of a cluster - all found hosts will be scanned
+      community.vmware.vmware_host_scanhba:
+        <<: *vsphere_creds
+        cluster_name : '{{ cluster_name }}'
+        refresh_storage: true
+      delegate_to: localhost
+      tags:
+        - provision_storage
+
+    - name: VMware - Gather info about vmhbas of all ESXi Host in the given Cluster
+      community.vmware.vmware_host_disk_info:
+        <<: *vsphere_creds
+        cluster_name: '{{ cluster_name }}'
+      delegate_to: localhost
+      register: host_vmhbas
+      tags:
+        - provision_storage
+
+    # Find a disk that is backed by the new Pflex volume
+    - name: VMware - Find matching WWN for the volume
+      set_fact:
+        volume_wwn: "{{ host_vmhbas | to_json | from_json | json_query('hosts_disk_info.*') | flatten | json_query(canonical_name_query) | first  }}"
+      vars:
+        canonical_name_query: "[?contains(canonical_name, '{{ newvol_details.volume_details.id }}')].canonical_name"
+      tags:
+        - provision_storage
+
+    # Find a disk that is backed by the new Pflex volume
+    - name: Assert that volume_wwn is not empty
+      assert:
+        that:
+          - volume_wwn is defined
+          - volume_wwn != ''
+        fail_msg: "Volume not found"
+        success_msg: "vSphere disk mapped to pflex volume found: {{ volume_wwn }}"
+      tags:
+        - provision_storage
+    
+
+    - name: VMware - Mount PowerFlex VMFS datastores to ESXi
+      community.vmware.vmware_host_datastore:
+        <<: *vsphere_creds
+        datastore_name: "{{ datastore_name }}"
+        datastore_type: 'vmfs'
+        vmfs_device_name: "{{ volume_wwn }}"
+        # TODO get from another query
+        esxi_hostname: "{{ host_name }}"
+        state: present
+      delegate_to: localhost
+      tags:
+        - provision_storage
+      
+
+    - name: VMware - Rescan HBA's of a cluster - all found hosts will be scanned
+      community.vmware.vmware_host_scanhba:
+        <<: *vsphere_creds
+        cluster_name : '{{ cluster_name }}'
+        refresh_storage: true
+      delegate_to: localhost
+      tags:
+        - provision_storage
+
+    # loop on powerflex_sdc_details.SDCs and get the id of each item
+    

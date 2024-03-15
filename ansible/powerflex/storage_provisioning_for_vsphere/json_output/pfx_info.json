@@ -1,0 +1,780 @@
+{
+    "API_Version": "4.0",
+    "Array_Details": [
+        {
+            "addressSpaceUsage": "Normal",
+            "authenticationMethod": "Mno",
+            "capacityAlertCriticalThresholdPercent": 90,
+            "capacityAlertHighThresholdPercent": 80,
+            "capacityTimeLeftInDays": "Unlimited",
+            "cliPasswordAllowed": true,
+            "daysInstalled": 3,
+            "defragmentationEnabled": true,
+            "enterpriseFeaturesEnabled": true,
+            "id": "bdb598e13b76b70f",
+            "installId": "6402888805abda10",
+            "isInitialLicense": false,
+            "lastUpgradeTime": 0,
+            "managementClientSecureCommunicationEnabled": true,
+            "maxCapacityInGb": "102400",
+            "mdmCluster": {
+                "clusterMode": "ThreeNodes",
+                "clusterState": "ClusteredNormal",
+                "goodNodesNum": 3,
+                "goodReplicasNum": 2,
+                "id": "-4776743736623843569",
+                "master": {
+                    "id": "0e459d5a4f7a4400",
+                    "ips": [
+                        "192.168.2.101",
+                        "192.168.3.101"
+                    ],
+                    "managementIPs": [
+                        "192.168.1.101"
+                    ],
+                    "name": "powerflex-storage-101",
+                    "opensslVersion": "N/A",
+                    "port": 9011,
+                    "role": "Manager",
+                    "status": "Normal",
+                    "versionInfo": "R4_5.1000.0",
+                    "virtualInterfaces": [
+                        "eth1",
+                        "eth2"
+                    ]
+                },
+                "name": "scaleio-block-legacy-gateway",
+                "slaves": [
+                    {
+                        "id": "6acf61de7adeb601",
+                        "ips": [
+                            "192.168.2.102",
+                            "192.168.3.102"
+                        ],
+                        "managementIPs": [
+                            "192.168.1.102"
+                        ],
+                        "name": "powerflex-storage-102",
+                        "opensslVersion": "N/A",
+                        "port": 9011,
+                        "role": "Manager",
+                        "status": "Normal",
+                        "versionInfo": "R4_5.1000.0",
+                        "virtualInterfaces": [
+                            "eth1",
+                            "eth2"
+                        ]
+                    }
+                ],
+                "standbyMDMs": [
+                    {
+                        "id": "2a54a6af38b4f603",
+                        "ips": [
+                            "192.168.2.104",
+                            "192.168.3.104"
+                        ],
+                        "managementIPs": [
+                            "192.168.1.104"
+                        ],
+                        "name": "powerflex-storage-104",
+                        "opensslVersion": "N/A",
+                        "port": 9011,
+                        "role": "Manager",
+                        "virtualInterfaces": [
+                            "eth1",
+                            "eth2"
+                        ]
+                    }
+                ],
+                "tieBreakers": [
+                    {
+                        "id": "4b97beef4ae1cc02",
+                        "ips": [
+                            "192.168.2.103",
+                            "192.168.3.103"
+                        ],
+                        "managementIPs": [
+                            "192.168.1.103"
+                        ],
+                        "name": "powerflex-storage-103",
+                        "opensslVersion": "N/A",
+                        "port": 9011,
+                        "role": "TieBreaker",
+                        "status": "Normal",
+                        "versionInfo": "R4_5.1000.0"
+                    }
+                ],
+                "virtualIps": [
+                    "192.168.2.105",
+                    "192.168.3.105"
+                ]
+            },
+            "mdmExternalPort": 7611,
+            "mdmManagementPort": 8611,
+            "mdmSecurityPolicy": "None",
+            "showGuid": true,
+            "swid": "ELMSIODEVDEA09",
+            "systemVersionName": "DellEMC PowerFlex Version: R4_5.1000.103",
+            "tlsVersion": "TLSv1.2",
+            "upgradeState": "NoUpgrade"
+        }
+    ],
+    "Devices": [],
+    "Protection_Domains": [],
+    "Replication_Consistency_Groups": [],
+    "Replication_Pairs": [],
+    "SDCs": [
+        {
+            "hostOsFullType": null,
+            "hostType": "SdcHost",
+            "id": "0021929c00000000",
+            "installedSoftwareVersionInfo": "R4_5.0.0",
+            "kernelBuildNumber": "Releasebuild-214242",
+            "kernelVersion": "7.0.3",
+            "links": [
+                {
+                    "href": "/api/instances/Sdc::0021929c00000000",
+                    "rel": "self"
+                },
+                {
+                    "href": "/api/instances/Sdc::0021929c00000000/relationships/Statistics",
+                    "rel": "/api/Sdc/relationship/Statistics"
+                },
+                {
+                    "href": "/api/instances/Sdc::0021929c00000000/relationships/Volume",
+                    "rel": "/api/Sdc/relationship/Volume"
+                },
+                {
+                    "href": "/api/instances/System::bdb598e13b76b70f",
+                    "rel": "/api/parent/relationship/systemId"
+                }
+            ],
+            "maxNumPaths": null,
+            "maxNumSysPorts": null,
+            "mdmConnectionState": "Connected",
+            "mdmIpAddressesCurrent": false,
+            "memoryAllocationFailure": null,
+            "name": "esxi01-sdc",
+            "nqn": null,
+            "osType": "Esx",
+            "peerMdmId": null,
+            "perfProfile": "HighPerformance",
+            "sdcAgentActive": false,
+            "sdcApproved": true,
+            "sdcApprovedIps": null,
+            "sdcGuid": "B64B85DF-C97A-4813-8C1B-CF1A40F8DF21",
+            "sdcIp": "192.168.2.4",
+            "sdcIps": [
+                "192.168.2.4",
+                "192.168.3.4"
+            ],
+            "sdcType": "AppSdc",
+            "sdrId": null,
+            "sdtId": null,
+            "socketAllocationFailure": null,
+            "softwareVersionInfo": "R4_5.0.0",
+            "systemId": "bdb598e13b76b70f",
+            "versionInfo": "R4_5.0.0"
+        },
+        {
+            "hostOsFullType": null,
+            "hostType": "SdcHost",
+            "id": "0021929d00000001",
+            "installedSoftwareVersionInfo": "R4_5.1000.0",
+            "kernelBuildNumber": null,
+            "kernelVersion": "5.3.18",
+            "links": [
+                {
+                    "href": "/api/instances/Sdc::0021929d00000001",
+                    "rel": "self"
+                },
+                {
+                    "href": "/api/instances/Sdc::0021929d00000001/relationships/Statistics",
+                    "rel": "/api/Sdc/relationship/Statistics"
+                },
+                {
+                    "href": "/api/instances/Sdc::0021929d00000001/relationships/Volume",
+                    "rel": "/api/Sdc/relationship/Volume"
+                },
+                {
+                    "href": "/api/instances/System::bdb598e13b76b70f",
+                    "rel": "/api/parent/relationship/systemId"
+                }
+            ],
+            "maxNumPaths": null,
+            "maxNumSysPorts": null,
+            "mdmConnectionState": "Connected",
+            "mdmIpAddressesCurrent": false,
+            "memoryAllocationFailure": null,
+            "name": "linux-compute-30",
+            "nqn": null,
+            "osType": "Linux",
+            "peerMdmId": null,
+            "perfProfile": "HighPerformance",
+            "sdcAgentActive": false,
+            "sdcApproved": true,
+            "sdcApprovedIps": null,
+            "sdcGuid": "963855FC-B7C8-4C92-A888-88CA6D06F65A",
+            "sdcIp": "192.168.2.30",
+            "sdcIps": [
+                "192.168.2.30",
+                "192.168.3.30"
+            ],
+            "sdcType": "AppSdc",
+            "sdrId": null,
+            "sdtId": null,
+            "socketAllocationFailure": null,
+            "softwareVersionInfo": "R4_5.1000.0",
+            "systemId": "bdb598e13b76b70f",
+            "versionInfo": "R4_5.1000.0"
+        }
+    ],
+    "SDSs": [],
+    "Snapshot_Policies": [],
+    "Storage_Pools": [],
+    "Volumes": [
+        {
+            "accessModeLimit": "ReadWrite",
+            "ancestorVolumeId": null,
+            "autoSnapshotGroupId": null,
+            "compressionMethod": "NotApplicable",
+            "consistencyGroupId": null,
+            "creationTime": 1710231881,
+            "dataLayout": "MediumGranularity",
+            "id": "0c7a1fee00000004",
+            "links": [
+                {
+                    "href": "/api/instances/Volume::0c7a1fee00000004",
+                    "rel": "self"
+                },
+                {
+                    "href": "/api/instances/Volume::0c7a1fee00000004/relationships/Statistics",
+                    "rel": "/api/Volume/relationship/Statistics"
+                },
+                {
+                    "href": "/api/instances/VTree::024f202600000004",
+                    "rel": "/api/parent/relationship/vtreeId"
+                },
+                {
+                    "href": "/api/instances/StoragePool::7490c4e400000000",
+                    "rel": "/api/parent/relationship/storagePoolId"
+                }
+            ],
+            "lockedAutoSnapshot": false,
+            "lockedAutoSnapshotMarkedForRemoval": false,
+            "managedBy": "ScaleIO",
+            "mappedSdcInfo": [
+                {
+                    "accessMode": "ReadWrite",
+                    "hostType": "SdcHost",
+                    "isDirectBufferMapping": false,
+                    "limitBwInMbps": 0,
+                    "limitIops": 0,
+                    "nqn": null,
+                    "sdcId": "0021929c00000000",
+                    "sdcIp": "192.168.2.4",
+                    "sdcName": "esxi01-sdc"
+                }
+            ],
+            "name": "ansible-volume2",
+            "notGenuineSnapshot": false,
+            "nsid": 5,
+            "originalExpiryTime": 0,
+            "pairIds": null,
+            "replicationJournalVolume": false,
+            "replicationTimeStamp": 0,
+            "retentionLevels": [],
+            "secureSnapshotExpTime": 0,
+            "sizeInKb": 8388608,
+            "snplIdOfAutoSnapshot": null,
+            "snplIdOfSourceVolume": null,
+            "statistics": {
+                "childVolumeIds": [],
+                "descendantVolumeIds": [],
+                "initiatorSdcId": null,
+                "mappedSdcIds": [
+                    "0021929c00000000"
+                ],
+                "numOfChildVolumes": 0,
+                "numOfDescendantVolumes": 0,
+                "numOfMappedSdcs": 1,
+                "registrationKey": null,
+                "registrationKeys": [],
+                "replicationJournalVolume": false,
+                "replicationState": "UnmarkedForReplication",
+                "reservationType": "NotReserved",
+                "rplTotalJournalCap": 0,
+                "rplUsedJournalCap": 0,
+                "userDataReadBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcReadLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcTrimLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcWriteLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataTrimBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataWriteBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                }
+            },
+            "storagePoolId": "7490c4e400000000",
+            "timeStampIsAccurate": false,
+            "useRmcache": false,
+            "volumeClass": "defaultclass",
+            "volumeReplicationState": "UnmarkedForReplication",
+            "volumeType": "ThickProvisioned",
+            "vtreeId": "024f202600000004"
+        },
+        {
+            "accessModeLimit": "ReadWrite",
+            "ancestorVolumeId": null,
+            "autoSnapshotGroupId": null,
+            "compressionMethod": "NotApplicable",
+            "consistencyGroupId": null,
+            "creationTime": 1710225004,
+            "dataLayout": "MediumGranularity",
+            "id": "0c7a1fed00000003",
+            "links": [
+                {
+                    "href": "/api/instances/Volume::0c7a1fed00000003",
+                    "rel": "self"
+                },
+                {
+                    "href": "/api/instances/Volume::0c7a1fed00000003/relationships/Statistics",
+                    "rel": "/api/Volume/relationship/Statistics"
+                },
+                {
+                    "href": "/api/instances/VTree::024f202500000003",
+                    "rel": "/api/parent/relationship/vtreeId"
+                },
+                {
+                    "href": "/api/instances/StoragePool::7490c4e400000000",
+                    "rel": "/api/parent/relationship/storagePoolId"
+                }
+            ],
+            "lockedAutoSnapshot": false,
+            "lockedAutoSnapshotMarkedForRemoval": false,
+            "managedBy": "ScaleIO",
+            "mappedSdcInfo": [
+                {
+                    "accessMode": "ReadWrite",
+                    "hostType": "SdcHost",
+                    "isDirectBufferMapping": false,
+                    "limitBwInMbps": 0,
+                    "limitIops": 0,
+                    "nqn": null,
+                    "sdcId": "0021929c00000000",
+                    "sdcIp": "192.168.2.4",
+                    "sdcName": "esxi01-sdc"
+                }
+            ],
+            "name": "ansible-volume",
+            "notGenuineSnapshot": false,
+            "nsid": 4,
+            "originalExpiryTime": 0,
+            "pairIds": null,
+            "replicationJournalVolume": false,
+            "replicationTimeStamp": 0,
+            "retentionLevels": [],
+            "secureSnapshotExpTime": 0,
+            "sizeInKb": 8388608,
+            "snplIdOfAutoSnapshot": null,
+            "snplIdOfSourceVolume": null,
+            "statistics": {
+                "childVolumeIds": [],
+                "descendantVolumeIds": [],
+                "initiatorSdcId": null,
+                "mappedSdcIds": [
+                    "0021929c00000000"
+                ],
+                "numOfChildVolumes": 0,
+                "numOfDescendantVolumes": 0,
+                "numOfMappedSdcs": 1,
+                "registrationKey": null,
+                "registrationKeys": [],
+                "replicationJournalVolume": false,
+                "replicationState": "UnmarkedForReplication",
+                "reservationType": "NotReserved",
+                "rplTotalJournalCap": 0,
+                "rplUsedJournalCap": 0,
+                "userDataReadBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcReadLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcTrimLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcWriteLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataTrimBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataWriteBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                }
+            },
+            "storagePoolId": "7490c4e400000000",
+            "timeStampIsAccurate": false,
+            "useRmcache": false,
+            "volumeClass": "defaultclass",
+            "volumeReplicationState": "UnmarkedForReplication",
+            "volumeType": "ThickProvisioned",
+            "vtreeId": "024f202500000003"
+        },
+        {
+            "accessModeLimit": "ReadWrite",
+            "ancestorVolumeId": null,
+            "autoSnapshotGroupId": null,
+            "compressionMethod": "NotApplicable",
+            "consistencyGroupId": null,
+            "creationTime": 1709916539,
+            "dataLayout": "MediumGranularity",
+            "id": "0c79f8de00000002",
+            "links": [
+                {
+                    "href": "/api/instances/Volume::0c79f8de00000002",
+                    "rel": "self"
+                },
+                {
+                    "href": "/api/instances/Volume::0c79f8de00000002/relationships/Statistics",
+                    "rel": "/api/Volume/relationship/Statistics"
+                },
+                {
+                    "href": "/api/instances/VTree::024ef91600000002",
+                    "rel": "/api/parent/relationship/vtreeId"
+                },
+                {
+                    "href": "/api/instances/StoragePool::7490c4e400000000",
+                    "rel": "/api/parent/relationship/storagePoolId"
+                }
+            ],
+            "lockedAutoSnapshot": false,
+            "lockedAutoSnapshotMarkedForRemoval": false,
+            "managedBy": "ScaleIO",
+            "mappedSdcInfo": [
+                {
+                    "accessMode": "ReadWrite",
+                    "hostType": "SdcHost",
+                    "isDirectBufferMapping": false,
+                    "limitBwInMbps": 0,
+                    "limitIops": 0,
+                    "nqn": null,
+                    "sdcId": "0021929c00000000",
+                    "sdcIp": "192.168.2.4",
+                    "sdcName": "esxi01-sdc"
+                }
+            ],
+            "name": "init-datastore-vol",
+            "notGenuineSnapshot": false,
+            "nsid": 3,
+            "originalExpiryTime": 0,
+            "pairIds": null,
+            "replicationJournalVolume": false,
+            "replicationTimeStamp": 0,
+            "retentionLevels": [],
+            "secureSnapshotExpTime": 0,
+            "sizeInKb": 134217728,
+            "snplIdOfAutoSnapshot": null,
+            "snplIdOfSourceVolume": null,
+            "statistics": {
+                "childVolumeIds": [],
+                "descendantVolumeIds": [],
+                "initiatorSdcId": null,
+                "mappedSdcIds": [
+                    "0021929c00000000"
+                ],
+                "numOfChildVolumes": 0,
+                "numOfDescendantVolumes": 0,
+                "numOfMappedSdcs": 1,
+                "registrationKey": null,
+                "registrationKeys": [],
+                "replicationJournalVolume": false,
+                "replicationState": "UnmarkedForReplication",
+                "reservationType": "NotReserved",
+                "rplTotalJournalCap": 0,
+                "rplUsedJournalCap": 0,
+                "userDataReadBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcReadLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcTrimLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcWriteLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataTrimBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataWriteBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                }
+            },
+            "storagePoolId": "7490c4e400000000",
+            "timeStampIsAccurate": false,
+            "useRmcache": false,
+            "volumeClass": "defaultclass",
+            "volumeReplicationState": "UnmarkedForReplication",
+            "volumeType": "ThinProvisioned",
+            "vtreeId": "024ef91600000002"
+        },
+        {
+            "accessModeLimit": "ReadWrite",
+            "ancestorVolumeId": null,
+            "autoSnapshotGroupId": null,
+            "compressionMethod": "NotApplicable",
+            "consistencyGroupId": null,
+            "creationTime": 1709916505,
+            "dataLayout": "MediumGranularity",
+            "id": "0c79f8dd00000001",
+            "links": [
+                {
+                    "href": "/api/instances/Volume::0c79f8dd00000001",
+                    "rel": "self"
+                },
+                {
+                    "href": "/api/instances/Volume::0c79f8dd00000001/relationships/Statistics",
+                    "rel": "/api/Volume/relationship/Statistics"
+                },
+                {
+                    "href": "/api/instances/VTree::024ef91500000001",
+                    "rel": "/api/parent/relationship/vtreeId"
+                },
+                {
+                    "href": "/api/instances/StoragePool::7490c4e400000000",
+                    "rel": "/api/parent/relationship/storagePoolId"
+                }
+            ],
+            "lockedAutoSnapshot": false,
+            "lockedAutoSnapshotMarkedForRemoval": false,
+            "managedBy": "ScaleIO",
+            "mappedSdcInfo": null,
+            "name": "init-nvme-esxi",
+            "notGenuineSnapshot": false,
+            "nsid": 2,
+            "originalExpiryTime": 0,
+            "pairIds": null,
+            "replicationJournalVolume": false,
+            "replicationTimeStamp": 0,
+            "retentionLevels": [],
+            "secureSnapshotExpTime": 0,
+            "sizeInKb": 67108864,
+            "snplIdOfAutoSnapshot": null,
+            "snplIdOfSourceVolume": null,
+            "statistics": {
+                "childVolumeIds": [],
+                "descendantVolumeIds": [],
+                "initiatorSdcId": null,
+                "mappedSdcIds": [],
+                "numOfChildVolumes": 0,
+                "numOfDescendantVolumes": 0,
+                "numOfMappedSdcs": 0,
+                "registrationKey": null,
+                "registrationKeys": [],
+                "replicationJournalVolume": false,
+                "replicationState": "UnmarkedForReplication",
+                "reservationType": "NotReserved",
+                "rplTotalJournalCap": 0,
+                "rplUsedJournalCap": 0,
+                "userDataReadBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcReadLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcTrimLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcWriteLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataTrimBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataWriteBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                }
+            },
+            "storagePoolId": "7490c4e400000000",
+            "timeStampIsAccurate": false,
+            "useRmcache": false,
+            "volumeClass": "defaultclass",
+            "volumeReplicationState": "UnmarkedForReplication",
+            "volumeType": "ThinProvisioned",
+            "vtreeId": "024ef91500000001"
+        },
+        {
+            "accessModeLimit": "ReadWrite",
+            "ancestorVolumeId": null,
+            "autoSnapshotGroupId": null,
+            "compressionMethod": "NotApplicable",
+            "consistencyGroupId": null,
+            "creationTime": 1709912831,
+            "dataLayout": "MediumGranularity",
+            "id": "0c79f8dc00000000",
+            "links": [
+                {
+                    "href": "/api/instances/Volume::0c79f8dc00000000",
+                    "rel": "self"
+                },
+                {
+                    "href": "/api/instances/Volume::0c79f8dc00000000/relationships/Statistics",
+                    "rel": "/api/Volume/relationship/Statistics"
+                },
+                {
+                    "href": "/api/instances/VTree::024ef91400000000",
+                    "rel": "/api/parent/relationship/vtreeId"
+                },
+                {
+                    "href": "/api/instances/StoragePool::7490c4e400000000",
+                    "rel": "/api/parent/relationship/storagePoolId"
+                }
+            ],
+            "lockedAutoSnapshot": false,
+            "lockedAutoSnapshotMarkedForRemoval": false,
+            "managedBy": "ScaleIO",
+            "mappedSdcInfo": [
+                {
+                    "accessMode": "ReadWrite",
+                    "hostType": "SdcHost",
+                    "isDirectBufferMapping": false,
+                    "limitBwInMbps": 0,
+                    "limitIops": 0,
+                    "nqn": null,
+                    "sdcId": "0021929d00000001",
+                    "sdcIp": "192.168.2.30",
+                    "sdcName": "linux-compute-30"
+                }
+            ],
+            "name": "init-workload-vol",
+            "notGenuineSnapshot": false,
+            "nsid": 1,
+            "originalExpiryTime": 0,
+            "pairIds": null,
+            "replicationJournalVolume": false,
+            "replicationTimeStamp": 0,
+            "retentionLevels": [],
+            "secureSnapshotExpTime": 0,
+            "sizeInKb": 16777216,
+            "snplIdOfAutoSnapshot": null,
+            "snplIdOfSourceVolume": null,
+            "statistics": {
+                "childVolumeIds": [],
+                "descendantVolumeIds": [],
+                "initiatorSdcId": null,
+                "mappedSdcIds": [
+                    "0021929d00000001"
+                ],
+                "numOfChildVolumes": 0,
+                "numOfDescendantVolumes": 0,
+                "numOfMappedSdcs": 1,
+                "registrationKey": null,
+                "registrationKeys": [],
+                "replicationJournalVolume": false,
+                "replicationState": "UnmarkedForReplication",
+                "reservationType": "NotReserved",
+                "rplTotalJournalCap": 0,
+                "rplUsedJournalCap": 0,
+                "userDataReadBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcReadLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcTrimLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataSdcWriteLatency": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataTrimBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                },
+                "userDataWriteBwc": {
+                    "numOccured": 0,
+                    "numSeconds": 0,
+                    "totalWeightInKb": 0
+                }
+            },
+            "storagePoolId": "7490c4e400000000",
+            "timeStampIsAccurate": false,
+            "useRmcache": false,
+            "volumeClass": "defaultclass",
+            "volumeReplicationState": "UnmarkedForReplication",
+            "volumeType": "ThinProvisioned",
+            "vtreeId": "024ef91400000000"
+        }
+    ],
+    "changed": false,
+    "failed": false
+}

@@ -1,0 +1,6 @@
+vcenter_hostname: 'vcenter01.powerflex.lab'
+vcenter_username: 'administrator@vsphere.local'
+vcenter_password: ''
+cluster_name: 'CLS01'
+host_name: 'esxi01.powerflex.lab'
+datastore_name: 'ansible_ds-demo'
