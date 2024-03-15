@@ -1,0 +1,85 @@
+{
+    "changed": false,
+    "failed": false,
+    "hosts_disk_info": {
+        "esxi01.powerflex.lab": [
+            {
+                "canonical_name": "eui.bdb598e13b76b70f0021929c00000000",
+                "capacity_mb": 0,
+                "device_ctd_list": [
+                    "vmhba65:C0:T32:L0"
+                ],
+                "device_path": "/vmfs/devices/disks/eui.bdb598e13b76b70f0021929c00000000",
+                "device_type": "disk",
+                "disk_uid": "key-vim.host.ScsiDisk-0100000000454d432d626462353938653133623736623730662d30303231393239633030303030303030005363616c6549",
+                "display_name": "EMC Fibre Channel Disk (eui.bdb598e13b76b70f0021929c00000000)"
+            },
+            {
+                "canonical_name": "eui.bdb598e13b76b70f0c7a1fed00000003",
+                "capacity_mb": 8192,
+                "device_ctd_list": [
+                    "vmhba65:C0:T0:L3"
+                ],
+                "device_path": "/vmfs/devices/disks/eui.bdb598e13b76b70f0c7a1fed00000003",
+                "device_type": "disk",
+                "disk_uid": "key-vim.host.ScsiDisk-0100030000454d432d626462353938653133623736623730662d30633761316665643030303030303033005363616c6549",
+                "display_name": "EMC Fibre Channel Disk (eui.bdb598e13b76b70f0c7a1fed00000003)"
+            },
+            {
+                "canonical_name": "eui.bdb598e13b76b70f0c79f8de00000002",
+                "capacity_mb": 131072,
+                "device_ctd_list": [
+                    "vmhba65:C0:T0:L2"
+                ],
+                "device_path": "/vmfs/devices/disks/eui.bdb598e13b76b70f0c79f8de00000002",
+                "device_type": "disk",
+                "disk_uid": "key-vim.host.ScsiDisk-0100020000454d432d626462353938653133623736623730662d30633739663864653030303030303032005363616c6549",
+                "display_name": "EMC Fibre Channel Disk (eui.bdb598e13b76b70f0c79f8de00000002)"
+            },
+            {
+                "canonical_name": "mpx.vmhba1:C0:T0:L0",
+                "capacity_mb": 0,
+                "device_ctd_list": [
+                    "vmhba1:C0:T0:L0"
+                ],
+                "device_path": "",
+                "device_type": "cdrom",
+                "disk_uid": "key-vim.host.ScsiLun-0005000000766d686261313a303a30",
+                "display_name": "Local NECVMWar CD-ROM (mpx.vmhba1:C0:T0:L0)"
+            },
+            {
+                "canonical_name": "mpx.vmhba0:C0:T1:L0",
+                "capacity_mb": 307200,
+                "device_ctd_list": [
+                    "vmhba0:C0:T1:L0"
+                ],
+                "device_path": "/vmfs/devices/disks/mpx.vmhba0:C0:T1:L0",
+                "device_type": "disk",
+                "disk_uid": "key-vim.host.ScsiDisk-0000000000766d686261303a313a30",
+                "display_name": "Local VMware Disk (mpx.vmhba0:C0:T1:L0)"
+            },
+            {
+                "canonical_name": "mpx.vmhba0:C0:T0:L0",
+                "capacity_mb": 20480,
+                "device_ctd_list": [
+                    "vmhba0:C0:T0:L0"
+                ],
+                "device_path": "/vmfs/devices/disks/mpx.vmhba0:C0:T0:L0",
+                "device_type": "disk",
+                "disk_uid": "key-vim.host.ScsiDisk-0000000000766d686261303a303a30",
+                "display_name": "Local VMware Disk (mpx.vmhba0:C0:T0:L0)"
+            },
+            {
+                "canonical_name": "eui.bdb598e13b76b70f0c7a1fee00000004",
+                "capacity_mb": 8192,
+                "device_ctd_list": [
+                    "vmhba65:C0:T0:L4"
+                ],
+                "device_path": "/vmfs/devices/disks/eui.bdb598e13b76b70f0c7a1fee00000004",
+                "device_type": "disk",
+                "disk_uid": "key-vim.host.ScsiDisk-0100040000454d432d626462353938653133623736623730662d30633761316665653030303030303034005363616c6549",
+                "display_name": "EMC Fibre Channel Disk (eui.bdb598e13b76b70f0c7a1fee00000004)"
+            }
+        ]
+    }
+}

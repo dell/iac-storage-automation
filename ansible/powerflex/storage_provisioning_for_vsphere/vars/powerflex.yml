@@ -1,0 +1,8 @@
+gateway_host: 'pfmp.powerflex.lab'
+pflex_username: 'admin'
+pflex_password: ''
+esxi_sdc: 'esxi01-sdc'
+pflex_volume_name: 'ansible-volume-demo'
+storage_pool: 'SP-SW_SSD-1'
+protection_domain: 'PD-1'
+size: 8
