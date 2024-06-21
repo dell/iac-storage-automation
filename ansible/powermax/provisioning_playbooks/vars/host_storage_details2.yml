@@ -11,10 +11,10 @@ host_name: Ansible_Host_IG
 # Type, no mixing iSCSI and FC, or FC and NVMeOF
 
 port_list:
-  - director_id: FA-1D
-    port_id: 4 
-  - director_id: FA-2D
-    port_id: 4 
+  - director_id: OR-1C
+    port_id: 2 
+  - director_id: OR-2C
+    port_id: 2 
 
 # Host Initiators ensure colon is removed from input.
 
