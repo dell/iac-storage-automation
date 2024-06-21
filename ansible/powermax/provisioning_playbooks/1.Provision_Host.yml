@@ -47,6 +47,7 @@
         portgroup_name: "{{ portgroup_name }}"
         state: "present"
         ports:  "{{ port_list }}"
+        port_group_protocol: "SCSI_FC"
         port_state: 'present-in-group'
 
     - name: Create MV "{{ mv_name }}" with existing elements
