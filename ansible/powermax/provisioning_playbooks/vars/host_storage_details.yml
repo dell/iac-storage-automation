@@ -13,7 +13,7 @@ host_name: Ansible_Host_IG
 port_list:
   - director_id: OR-1C
     port_id: 1 
-  - director_id: OR-2c
+  - director_id: OR-2C
     port_id: 1 
 
 # Host Initiators ensure colon is removed from input.
