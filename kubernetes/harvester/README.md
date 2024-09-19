@@ -50,6 +50,7 @@ To take effect immediately you have to either restart the node or
 ssh to it and start the service manually.
 
 >Note: in case you use iSCSI you can adapt the sample file to start `iscid` daemon.
+>
 >Likewise for NVMe, you need to make sure `nvmf-autoconnect.service` is started.
 
 ## Namespace & Secret creation
@@ -60,8 +61,18 @@ kubectl create secret generic powermax-creds -n powermax --from-literal=username
 ```
 
 # Helm installation
-TODO
-To simplify the configuration
+The simplest way to install Dell CSI & CSM with Helm is to use
+the [Wizard](https://dell.github.io/csm-docs/docs/deployment/csminstallationwizard/src/index.html);
+but first let's add the repo:
+
+```bash
+helm repo add dell https://dell.github.io/helm-charts
+```
+
+![csm wizard powermax](csm-wizard.gif)
+
+>Note: if you need to tweak more settings please refer to
+>[the documentation]().
 
 # `StorageClass` & `VolumeSnapshotClass` creation
 
@@ -73,7 +84,7 @@ file system types and more).
 Likewise for the `VolumeSnapshotClass` you can find [samples in the
 GitHub repository](https://github.com/dell/csi-powermax/tree/main/samples/volumesnapshotclass).
 
-# Haverster `csi-driver-config`
+# Harvester `csi-driver-config`
 
 To enable Virtual Machine snapshots with Dell backed volume it
 is necessary to add the provisionner.
