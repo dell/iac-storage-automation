@@ -38,16 +38,40 @@ To use `helm` and `kubectl` let's first download the `KUBECONFIG`:
 When using block storage protocols like Fiber Channel, iSCSI or NVMe
 it is mandatory to configure the mulitpathd service.
 
+The below `CloudInit` configures `multipathd` to start with the node
+and the `multipath.conf` makes sure only the `EMC` LUNs are part of multipathd;
+not Longhorn volumes.
+
 ```bash
-kubectl apply -f 
+kubectl apply -f  https://raw.githubusercontent.com/dell/iac-storage-automation/main/kubernetes/harvester/multipathd-harvester.yaml
 ```
 
+To take effect immediately you have to either restart the node or
+ssh to it and start the service manually.
+
+>Note: in case you use iSCSI you can adapt the sample file to start `iscid` daemon.
+>Likewise for NVMe, you need to make sure `nvmf-autoconnect.service` is started.
 
 ## Namespace & Secret creation
 
-# Helm installation
+```bash
+kubectl create namespace powermax
+kubectl create secret generic powermax-creds -n powermax --from-literal=username=unisphere_user --from-literal=password=your_password
+```
 
-# StorageClasses creation
+# Helm installation
+TODO
+To simplify the configuration
+
+# `StorageClass` & `VolumeSnapshotClass` creation
+
+For the `StorageClass` creation you can refer to the samples
+[here](https://github.com/dell/csi-powermax/tree/main/samples/storageclass).
+They contains different configuration (with or without replication, different
+file system types and more).
+
+Likewise for the `VolumeSnapshotClass` you can find [samples in the
+GitHub repository](https://github.com/dell/csi-powermax/tree/main/samples/volumesnapshotclass).
 
 # Haverster `csi-driver-config`
 
