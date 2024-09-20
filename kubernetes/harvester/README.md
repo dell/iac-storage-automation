@@ -34,6 +34,21 @@ To use `helm` and `kubectl` let's first download the `KUBECONFIG`:
 
 # Pre-requisites
 
+## Connectivity
+
+To provision & mount volumes the bare-metal nodes need access to
+the REST API endpoint and the storage network.
+
+In case of Fiber Channel, the zoning to the nodes must be done
+before the installation of the CSI driver.
+
+As part of the installation process we will need to set a
+couple of parameters:
+* The API endpoint; Unisphere API and possibly a backup endpoint for PowerMax
+* The credentials to access the API
+* The storage identifier (SymID for PowerMax)
+* The storage pool
+
 ## Multipathd
 When using block storage protocols like Fiber Channel, iSCSI or NVMe
 it is mandatory to configure the mulitpathd service.
