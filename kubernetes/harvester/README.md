@@ -1,11 +1,13 @@
 # Using Dell CSI for PowerMax on Harvester
 
-Dell CSI drivers for PowerStore, PowerMax, PowerFlex and PowerScale
-are all tested and compatible with Kubevirt.
+Dell CSI drivers for PowerStore, PowerMax, PowerFlex, and PowerScale
+have all been tested and are compatible with Kubevirt.
 
-The following article gives the instructions to install Dell CSI
-for PowerMax on Harvester.
+The following article gives the instructions to install Dell CSI for PowerMax on Harvester.
 The steps are very similar no matter the storage backend.
+
+The following article provides instructions for installing Dell CSI for PowerMax on Harvester.
+The steps are very similar regardless of the storage backend.
 
 This procedure has been tested on:
 
@@ -18,14 +20,14 @@ This procedure has been tested on:
 
 # Documentation
 
-Before you begin, we highly recommend to read the
+Before you begin, we highly recommend reading the
 [official Dell Container Storage Modules documentation](https://dell.github.io/csm-docs/docs/).
 This website has all the information to deploy, configure and manage
 Dell CSI drivers & other modules.
 
 Dell CSI drivers are available as [Helm charts](https://github.com/dell/helm-charts)
 or [Operator](https://operatorhub.io/).
-In the following guide we will use the Helm deployment method
+In this guide we will use the Helm deployment method
 applied to [CSI PowerMax](https://dell.github.io/csm-docs/docs/deployment/helm/drivers/installation/powermax/).
 
 # Connect to Harvester cluster
@@ -36,37 +38,38 @@ To use `helm` and `kubectl` let's first download the `KUBECONFIG`:
 
 ## Connectivity
 
-To provision & mount volumes the bare-metal nodes need access to
+To provision & mount volumes, the bare-metal nodes need access to
 the REST API endpoint and the storage network.
 
-In case of Fiber Channel, the zoning to the nodes must be done
-before the installation of the CSI driver.
+
+When dealing with Fiber Channel, it's imperative that the zoning to the nodes
+is completed **before** the installation of the CSI driver.
 
 As part of the installation process we will need to set a
 couple of parameters:
-* The API endpoint; Unisphere API and possibly a backup endpoint for PowerMax
+* The Unisphere API endpoint and possibly a backup endpoint for PowerMax
 * The credentials to access the API
 * The storage identifier (SymID for PowerMax)
 * The storage pool
 
 ## Multipathd
-When using block storage protocols like Fiber Channel, iSCSI or NVMe
-it is mandatory to configure the mulitpathd service.
+Configuring the multipath service is mandatory when using block storage
+protocols like Fiber Channel, iSCSI, or NVMe.
 
-The below `CloudInit` configures `multipathd` to start with the node
-and the `multipath.conf` makes sure only the `EMC` LUNs are part of multipathd;
-not Longhorn volumes.
+The `CloudInit` below sets up:
+* `multipathd` to start on node boot
+* `multipath.conf` to make sure only the `EMC` LUNs are part of multipathd; not Longhorn volumes.
 
 ```bash
 kubectl apply -f  https://raw.githubusercontent.com/dell/iac-storage-automation/main/kubernetes/harvester/multipathd-harvester.yaml
 ```
 
-To take effect immediately you have to either restart the node or
-ssh to it and start the service manually.
+To take effect immediately, you have to either restart the node or
+ssh it and start the service manually.
 
->Note: in case you use iSCSI you can adapt the sample file to start `iscid` daemon.
+> Note: If you use iSCSI, you can adapt the sample file to start the `iscsid` daemon.
 >
->Likewise for NVMe, you need to make sure `nvmf-autoconnect.service` is started.
+> Likewise, for NVMe, you must ensure the `nvm-auto-connect.service` is started.
 
 ## Namespace & Secret creation
 
@@ -78,7 +81,7 @@ kubectl create secret generic powermax-creds -n powermax --from-literal=username
 # Helm installation
 The simplest way to install Dell CSI & CSM with Helm is to use
 the [Wizard](https://dell.github.io/csm-docs/docs/deployment/csminstallationwizard/src/index.html);
-but first let's add the repo:
+but first, let's add the repo:
 
 ```bash
 helm repo add dell https://dell.github.io/helm-charts
@@ -91,18 +94,18 @@ helm repo add dell https://dell.github.io/helm-charts
 
 # `StorageClass` & `VolumeSnapshotClass` creation
 
-For the `StorageClass` creation you can refer to the samples
+For the `StorageClass` creation, you can refer to the samples
 [here](https://github.com/dell/csi-powermax/tree/main/samples/storageclass).
-They contains different configuration (with or without replication, different
-file system types and more).
+They contain different configurations (with or without replication, different
+file system types, and more).
 
-Likewise for the `VolumeSnapshotClass` you can find [samples in the
-GitHub repository](https://github.com/dell/csi-powermax/tree/main/samples/volumesnapshotclass).
+Likewise, you can find [samples in the GitHub repository](https://github.com/dell/csi-powermax/tree/main/samples/volumesnapshotclass)
+for the `VolumeSnapshotClass`.
 
 # Harvester `csi-driver-config`
 
-To enable Virtual Machine snapshots with Dell backed volume it
-is necessary to add the provisionner.
+The last step is configuring Harvester `csi-driver-config`
+to allow Dell provisioner to take Virrtual Machine snapshots.
 
 To do so, go under __Advanced__ > __Settings__ > __csi-driver-config__ > __Edit Setting__.
 
