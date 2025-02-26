@@ -1,0 +1,33 @@
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: multipathd-start
+spec:
+  matchSelector: {}
+  filename: 99_multipathd.yaml
+  contents: |
+    stages:
+      network:
+      - name: "Configure multipathd"
+        files:
+        - path: /etc/multipath.conf
+          content: |
+            blacklist {
+                device {
+                    vendor "!EMC"
+                    product "!LUN"
+                }
+            }
+            blacklist_exceptions {
+                device {
+                    vendor "EMC"
+                    product "LUN"
+                }
+            }
+          permissions: 0744
+      - name: "Start multipathd service"
+        systemctl:
+          enable:
+          - multipathd
+          start:
+          - multipathd
