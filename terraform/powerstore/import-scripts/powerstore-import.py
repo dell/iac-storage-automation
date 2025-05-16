@@ -11,7 +11,7 @@ POWERSTORE_ENDPOINT = "https://1.2.3.4/api/rest"
 # PowerStore username
 POWERSTORE_USER = "user"
 # PowerStore password
-POWERSTORE_PASSWORD = "password"
+POWERSTORE_PASSWORD = ""
 # Output Terraform file name
 OUTPUT_TF_FILE = "import_volumes.tf"
 # Required PowerStore provider version
