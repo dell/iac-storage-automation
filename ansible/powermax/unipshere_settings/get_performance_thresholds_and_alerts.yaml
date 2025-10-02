@@ -10,8 +10,8 @@
       uri:
         url: "https://Unipshere:8443/univmax/restapi/103/settings/alert/performance_threshold"
         validate_certs: false
-        user: "Ansible_User"
-        password: "supersecret!321"
+        user: {{ Username }}
+        password: {{ Password }}
         timeout: 200
         headers:
           Content-Type: "application/json"
