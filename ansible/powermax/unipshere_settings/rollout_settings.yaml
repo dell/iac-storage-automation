@@ -12,8 +12,8 @@
       uri:
         url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/registration/performance"
         method: GET
-        user: "Ansible_User"
-        password: "SuperSecret321!"
+        user: {{ Username }}
+        password: {{ Password }}
         validate_certs: false
         headers:
           Content-Type: "application/json"
@@ -34,8 +34,8 @@
       uri:
         url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/registration/performance"
         validate_certs: false
-        user: "smc"
-        password: "smc"
+        user: {{ Username }}
+        password: {{ Password }}
         method: PUT
         headers:
           Content-Type: "application/json"
@@ -59,8 +59,8 @@
       uri:
         url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/alert/notification"
         validate_certs: false
-        user: "smc"
-        password: "smc"
+        user: {{ Username }}
+        password: {{ Password }}
         method: POST
         headers:
           Content-Type: "application/json"
@@ -103,8 +103,8 @@
       uri:
         url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/alert/performance_threshold"
         validate_certs: false
-        user: "smc"
-        password: "smc"
+        user: {{ Username }}
+        password: {{ Password }}
         method: PUT
         headers:
           Content-Type: "application/json"
@@ -141,8 +141,8 @@
       uri:
         url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/symmetrix/{{ item }}/alert/alert_policy"
         validate_certs: false
-        user: "smc"
-        password: "smc"
+        user: {{ Username }}
+        password: {{ Password }}
         method: PUT
         headers:
           Content-Type: "application/json"
@@ -158,8 +158,8 @@
       uri:
         url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/symmetrix/{{ item }}/alert/system_threshold"
         validate_certs: false
-        user: "smc"
-        password: "smc"
+        user: {{ Username }}
+        password: {{ Password }}
         method: PUT
         headers:
           Content-Type: "application/json"
@@ -181,8 +181,8 @@
       uri:
         url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/symmetrix/{{ item }}/alert/notification"
         validate_certs: false
-        user: "smc"
-        password: "smc"
+        user: {{ Username }}
+        password: {{ Password }}
         method: PUT
         headers:
           Content-Type: "application/json"
