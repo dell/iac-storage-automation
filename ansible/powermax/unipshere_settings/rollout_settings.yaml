@@ -1,0 +1,221 @@
+---
+- name: Demo Playbook to Export PowerMax Configuration Settings from Unisphere for PowerMax
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    ipaddress: "unisphereip"
+    api_version: "103"
+  tasks:
+    - name: Get local arrays for Registering performance Data Collection
+      uri:
+        url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/registration/performance"
+        method: GET
+        user: {{ Username }}
+        password: {{ Password }}
+        validate_certs: false
+        headers:
+          Content-Type: "application/json"
+          return_content: yes
+        status_code: [200, 204]
+      register: perf_reg_details
+
+
+    - name: Parse performance registration JSON
+      ansible.builtin.set_fact:
+        perf_reg_data: "{{ perf_reg_details.json.registration_details | list }}"
+
+    - name: Extract system_id values
+      ansible.builtin.set_fact:
+          system_ids: "{{ perf_reg_data | map(attribute='system_id') | list }}"
+
+    - name: Register performance Data Collection for all local arrays
+      uri:
+        url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/registration/performance"
+        validate_certs: false
+        user: {{ Username }}
+        password: {{ Password }}
+        method: PUT
+        headers:
+          Content-Type: "application/json"
+        body:
+          {
+             "registration_details": [
+               {
+                  "system_id": "{{ item }}",
+                  "diagnostic": false,
+                  "real_time": false,
+                  "file": false
+               }
+               ]}
+        body_format: json
+        return_content: yes
+        status_code: 200,204
+      loop: "{{ system_ids }}"
+      changed_when: true
+
+    - name: Configure Alert Subscriptions
+      uri:
+        url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/alert/notification"
+        validate_certs: false
+        user: {{ Username }}
+        password: {{ Password }}
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body:
+          {
+
+              "email": {
+              "enabled": "true",
+              "smtp_config":{
+                "server": "mailserver.lab.dell.com",
+                "sender": "email@address.com",
+                "port": 25 }},
+            "snmp": {
+              "enabled": "true",
+              "snmp_trap_targets": [
+                {
+                  "host": "snamp@lab.dell.com",
+                  "security_model": "usm",
+                  "port": 161,
+                  "version": 1
+                }
+              ]},
+            "syslog": {
+            "enabled": "true",
+            "syslog_target": {
+              "host": "syslog@dell.com",
+              "protocol": "udp",
+              "text_format": "RFC_3164",
+              "port": 514
+              }
+            }
+          }
+        body_format: json
+        return_content: yes
+        status_code: 207
+      changed_when: true
+      failed_when: false
+
+    - name: Configure performance thresholds
+      uri:
+        url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/alert/performance_threshold"
+        validate_certs: false
+        user: {{ Username }}
+        password: {{ Password }}
+        method: PUT
+        headers:
+          Content-Type: "application/json"
+        body:
+          {
+            "global_performance_thresholds": [
+              {
+                "category": "Array",
+                "metric": "BEUtilization",
+                "kpi": true,
+                "alert_error": true,
+                "first_upper_threshold": "60",
+                "second_upper_threshold": "80",
+                "first_lower_threshold": "50",
+                "second_lower_threshold": "40"
+              },
+              {
+                "category": "Array",
+                "metric": "HostMBs",
+                "kpi": true,
+                "alert_error": true,
+                "first_upper_threshold": "2000",
+                "second_upper_threshold": "2500",
+                "first_lower_threshold": "1900",
+                "second_lower_threshold": "1800"
+              } ] }
+        body_format: json
+        return_content: yes
+        status_code: 200,204,207
+      changed_when: true
+
+    - name: Configure Array Alert Policies for all local arrays
+      # Use GET call to find currrent settings can be used for subsequent payload
+      uri:
+        url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/symmetrix/{{ item }}/alert/alert_policy"
+        validate_certs: false
+        user: {{ Username }}
+        password: {{ Password }}
+        method: PUT
+        headers:
+          Content-Type: "application/json"
+        body: "{{ lookup('file','gold_alert_policy.json') | from_json }}"
+        body_format: json
+        return_content: yes
+        status_code: 200,204,207
+      loop: "{{ system_ids }}"
+      changed_when: true
+
+    - name: Set System Threshold Alert Notification for local arrays
+      # Use GET call to find current settings can be used for subsequent payload
+      uri:
+        url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/symmetrix/{{ item }}/alert/system_threshold"
+        validate_certs: false
+        user: {{ Username }}
+        password: {{ Password }}
+        method: PUT
+        headers:
+          Content-Type: "application/json"
+        body: "{{ lookup('file','system_thresholds.json') | from_json }}"
+        body_format: json
+        return_content: yes
+        status_code: 200,204,207
+      loop: "{{ system_ids }}"
+      changed_when: true
+
+    - name: Configure Alert Notification
+      # Manages storage array specific alert notification configuration and filtering of notifications per alert severity.
+      # This includes email subscriptions for specific type of notifications.
+      # Depending on the type of an alert (system, performance), the notifications can be sent only for specific alert
+      # severities, prioritizing certain types of events on a specific storage array. >
+      # No notifications will be sent, unless the notification's alert severity settings are configured.
+      # Please see the **_related endpoints_** section for endpoints concerning notification configuration,
+      # viewing and managing the generated alerts.
+      uri:
+        url: "https://{{ ipaddress }}:8443/univmax/restapi/{{ api_version }}/settings/symmetrix/{{ item }}/alert/notification"
+        validate_certs: false
+        user: {{ Username }}
+        password: {{ Password }}
+        method: PUT
+        headers:
+          Content-Type: "application/json"
+        body:
+          {
+            "alert_severity": {
+              "system": {
+                "fatal": "true",
+                "critical": "true",
+                "warning": "true"
+              },
+              "performance": {
+                "critical": "true",
+                "warning": "true"
+              }
+            },
+            "subscriptions": {
+              "system": [
+                "paule.martin@dell.com"
+              ],
+              "performance": [
+                "paule.martin@dell.com"
+              ],
+              "reports": [
+                "paule.martin@dell.com"
+              ],
+              "none": [
+                "donotreceiveemails@dell.com"
+              ]
+            }
+          }
+        body_format: json
+        return_content: yes
+        status_code: 200,204,207
+      loop: "{{ system_ids }}"
+      changed_when: true

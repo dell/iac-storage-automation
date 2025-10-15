@@ -1,0 +1,21 @@
+---
+- name: Demo Playbook to Export PowerMax Configuration Settings from Unisphere for PowerMax
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+
+  tasks:
+    - name: Get PowerMax Performance Threshold and Alert Settings
+      uri:
+        url: "https://Unipshere:8443/univmax/restapi/103/settings/alert/performance_threshold"
+        validate_certs: false
+        user: {{ Username }}
+        password: {{ Password }}
+        timeout: 200
+        headers:
+          Content-Type: "application/json"
+        method: GET
+        status_code:
+          - 200
+          - 201
